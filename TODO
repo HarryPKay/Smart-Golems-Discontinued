@@ -1,7 +1,20 @@
+BUGS
+shiftingprioties with negative amount errors : check
+swap task does not swap but overwrites both. : check
+
+commands break down after removing golem and spawning
+
+IMPORTANT:
+Have follow, halt, etc be default profiles
+task profile
+
+
+GENERAL:
+figure out how to have golems smoothly go to locations
 When golems move to locations, have them stop just before it.
 adjust goal priorities
-add random goals
-creating smart golem method
+
+ingame creation of smart golems
 texture to distinguish between normal golems
 persistence (saving tasks, who the golem belongs to, etc)
 owner identification
@@ -9,9 +22,8 @@ place blocks
 inventory
 build houses/mining/cutting wood/ fishing etc.
 gui alternative that call commands
-task profile
 
-extras:
+OTHER:
 arrow/flare for calling over golems in area
 golem equipment
 carry player

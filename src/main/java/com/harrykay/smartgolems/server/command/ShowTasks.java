@@ -10,13 +10,16 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class ShowTasks {
 
+    private static final String ARG_1 = "show-tasks";
+    private static final String ARG_2 = "golem name";
+
     static ArgumentBuilder<CommandSource, ?> register() {
-        return Commands.literal("show-tasks")
+        return Commands.literal(ARG_1)
                 .requires(cs -> cs.hasPermissionLevel(2)) //permission
-                .then(Commands.argument("golem name", StringArgumentType.string())
+                .then(Commands.argument(ARG_2, StringArgumentType.string())
                         .executes(ctx -> {
 
-                            SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, "golem name"));
+                            SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, ARG_2));
 
                             if (golemEntity == null) {
                                 ctx.getSource().asPlayer().sendMessage(new StringTextComponent("Could not find that golem."));

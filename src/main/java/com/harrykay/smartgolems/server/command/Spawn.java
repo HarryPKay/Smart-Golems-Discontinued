@@ -11,7 +11,7 @@ public class Spawn {
         return Commands.literal("spawn")
                 .requires(cs -> cs.hasPermissionLevel(2)) //permission
                 .executes(ctx -> {
-                    SmartGolems.createIntelGolem(ctx.getSource().asPlayer());
+                    SmartGolems.createSmartGolem(ctx.getSource().asPlayer());
                     return 0;
                 });
     }

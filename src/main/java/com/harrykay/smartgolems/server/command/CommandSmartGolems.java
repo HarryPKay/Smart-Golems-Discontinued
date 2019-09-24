@@ -4,12 +4,12 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 
-public class CommandRegister {
-    static final String MOD_ID = "smartgolems";
+public class CommandSmartGolems {
+    static final String COMMAND_NAME = "smartgolems";
 
-    public CommandRegister(CommandDispatcher<CommandSource> dispatcher) {
+    public CommandSmartGolems(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                LiteralArgumentBuilder.<CommandSource>literal(MOD_ID)
+                LiteralArgumentBuilder.<CommandSource>literal(COMMAND_NAME)
                         .then(Spawn.register())
                         .then(RemoveAllGolems.register())
                         .then(RemoveGolem.register())
@@ -18,6 +18,10 @@ public class CommandRegister {
                         .then(MoveGolem.register())
                         .then(Halt.register())
                         .then(ShowTasks.register())
+                        .then(MoveTask.register())
+                        .then(SwapTasks.register())
+                        .then(ShiftPriorities.register())
+                        .then(RemoveTask.register())
         );
     }
 }

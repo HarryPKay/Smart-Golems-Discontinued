@@ -16,26 +16,49 @@ public class SmartGolemEntity extends IronGolemEntity {
 
     private int placeBlockTimer = 10;
     private int goToPathTimer = 10;
-    private static final int maxTasks = 9;
+    public static final int maxTasks = 14;
     public HashMap<Integer, String> taskNameByPriority = new HashMap<>();
     private HashMap<Integer, Goal> tasks = new HashMap<>();
 
     public PlayerEntity focusedPlayer = null;
 
-    public void shiftGoalPriority(int amount) {
-        HashMap<Integer, String> temp = new HashMap<>();
+    public void shiftGoalPriority(Integer amount) {
+        HashMap<Integer, String> tempNameByPriority = new HashMap<>();
+        HashMap<Integer, Goal> tempTasks = new HashMap<>();
         for (Integer priority : taskNameByPriority.keySet()) {
-            if (priority + amount <= 9) {
-                temp.put(priority + amount, taskNameByPriority.get(priority));
+            if (priority + amount <= maxTasks && priority + amount >= 0) {
+                tempNameByPriority.put(priority + amount, taskNameByPriority.get(priority));
+                tempTasks.put(priority + amount, tasks.get(priority));
             } else {
                 removeGoal(priority);
             }
         }
 
-        taskNameByPriority = temp;
+        taskNameByPriority = tempNameByPriority;
+        tasks = tempTasks;
     }
 
-    // May seem redundant but is needed for manipulating current tasks.
+    // swap
+    public void swapGoal(int priorityLeft, int priorityRight) {
+        Goal taskLeft = tasks.get(priorityLeft);
+        String nameLeft = taskNameByPriority.get(priorityLeft);
+        Goal taskRight = tasks.get(priorityRight);
+        String nameRight = taskNameByPriority.get(priorityRight);
+
+        removeGoal(priorityLeft);
+        removeGoal(priorityRight);
+
+        addGoal(priorityLeft, taskRight, nameRight);
+        addGoal(priorityRight, taskLeft, nameLeft);
+    }
+
+    public void moveGoal(int priority, int newPriority) {
+        Goal task = tasks.get(priority);
+        String name = taskNameByPriority.get(priority);
+        removeGoal(priority);
+        addGoal(newPriority, task, name);
+    }
+
     public void addGoal(int priority, Goal task, String name) {
         tasks.put(priority, task);
         taskNameByPriority.put(priority, name);

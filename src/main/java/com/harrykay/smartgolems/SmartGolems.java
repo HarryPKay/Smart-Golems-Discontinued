@@ -1,7 +1,7 @@
 package com.harrykay.smartgolems;
 
 import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
-import com.harrykay.smartgolems.server.command.CommandRegister;
+import com.harrykay.smartgolems.server.command.CommandSmartGolems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -51,7 +51,7 @@ public class SmartGolems {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public static boolean createIntelGolem(PlayerEntity playerEntity) {
+    public static boolean createSmartGolem(PlayerEntity playerEntity) {
         if (playerEntity.world.isRemote) {
             return false;
         }
@@ -168,7 +168,7 @@ public class SmartGolems {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
-        new CommandRegister(event.getCommandDispatcher());
+        new CommandSmartGolems(event.getCommandDispatcher());
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
