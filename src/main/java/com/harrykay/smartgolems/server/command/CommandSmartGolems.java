@@ -17,11 +17,12 @@ public class CommandSmartGolems {
                         .then(PlaceBlock.register())
                         .then(MoveGolem.register())
                         .then(Halt.register())
-                        .then(ShowTasks.register())
+                        .then(ShowAssignedTasks.register())
                         .then(MoveTask.register())
                         .then(SwapTasks.register())
                         .then(ShiftPriorities.register())
                         .then(RemoveTask.register())
+                        .then(ShowAvailableTasks.register())
         );
     }
 }

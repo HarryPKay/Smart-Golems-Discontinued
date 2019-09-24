@@ -1,12 +1,10 @@
-BUGS
-shiftingprioties with negative amount errors : check
-swap task does not swap but overwrites both. : check
-
-commands break down after removing golem and spawning
+BUGS:
+none found
 
 IMPORTANT:
 Have follow, halt, etc be default profiles
 task profile
+consider having the class inherit from golementity instead.
 
 
 GENERAL:

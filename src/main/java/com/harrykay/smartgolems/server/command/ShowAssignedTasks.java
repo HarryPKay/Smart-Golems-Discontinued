@@ -8,9 +8,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 
-public class ShowTasks {
+public class ShowAssignedTasks {
 
-    private static final String ARG_1 = "show-tasks";
+    private static final String ARG_1 = "show-assigned-tasks";
     private static final String ARG_2 = "golem name";
 
     static ArgumentBuilder<CommandSource, ?> register() {

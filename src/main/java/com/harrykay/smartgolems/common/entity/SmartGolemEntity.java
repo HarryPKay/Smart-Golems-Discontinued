@@ -14,8 +14,32 @@ import java.util.HashMap;
 // follow owner goal
 public class SmartGolemEntity extends IronGolemEntity {
 
-    private int placeBlockTimer = 10;
-    private int goToPathTimer = 10;
+    public static void createProfile(HashMap<Integer, Goal> tasks, HashMap<Integer, String> taskNameByPriority, SupportedTasks... supportedTasks) {
+
+    }
+
+    public enum SupportedTasks {
+        // Custom
+
+        LookAtPlayer,
+        MoveTowardsBlockPosGoal,
+        MoveTowardsPlayerGoal,
+        PlaceBlockGoal,
+
+        // Vanilla
+
+        // IronGolemEntity Default
+
+        MeleeAttackGoal,
+        MoveTowardsTargetGoal,
+        MoveTowardsVillageGoal,
+        MoveThroughVillageGoal,
+        ShowVillagerFlowerGoal,
+        WaterAvoidingRandomWalkingGoal,
+        LookAtGoal,
+        LookRandomlyGoal
+    }
+
     public static final int maxTasks = 14;
     public HashMap<Integer, String> taskNameByPriority = new HashMap<>();
     private HashMap<Integer, Goal> tasks = new HashMap<>();
@@ -38,7 +62,6 @@ public class SmartGolemEntity extends IronGolemEntity {
         tasks = tempTasks;
     }
 
-    // swap
     public void swapGoal(int priorityLeft, int priorityRight) {
         Goal taskLeft = tasks.get(priorityLeft);
         String nameLeft = taskNameByPriority.get(priorityLeft);
