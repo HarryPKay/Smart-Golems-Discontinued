@@ -2,15 +2,27 @@ package com.harrykay.smartgolems.common.entity;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-
+// follow owner goal
 public class SmartGolemEntity extends IronGolemEntity {
 
     private int placeBlockTimer = 10;
     private int goToPathTimer = 10;
+
+    public PlayerEntity focusedPlayer = null;
+
+    //    public MoveTowardsBlockPos(CreatureEntity creature, double speedIn, float targetMaxDistance) {
+//        this.creature = creature;
+//        this.speed = speedIn;
+//        this.maxTargetDistance = targetMaxDistance;
+//        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+//    }
+
 
 //    private ArrayList<BlockPos> positions = new ArrayList<>();
 //    private ArrayList<Block> currentState = new ArrayList<>();
@@ -52,6 +64,7 @@ public class SmartGolemEntity extends IronGolemEntity {
 
     protected void registerAttributes() {
         super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
         setPlayerCreated(true);
     }
 

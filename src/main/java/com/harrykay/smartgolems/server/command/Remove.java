@@ -7,7 +7,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 
-public class CommandRemove {
+public class Remove {
 
     static ArgumentBuilder<CommandSource, ?> register() {
 

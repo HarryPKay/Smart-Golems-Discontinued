@@ -1,7 +1,7 @@
 package com.harrykay.smartgolems;
 
 import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
-import com.harrykay.smartgolems.server.command.SmartGolemsCommand;
+import com.harrykay.smartgolems.server.command.CommandRegister;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -26,8 +26,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// The value here should match an entry in the META-INF/mods.toml file
 
 @Mod.EventBusSubscriber(modid = SmartGolems.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(SmartGolems.MOD_ID)
@@ -60,12 +58,13 @@ public class SmartGolems {
         SmartGolemEntity golem = new SmartGolemEntity(SMART_GOLEM, playerEntity.world);
 
         golem.setLocationAndAngles(playerEntity.posX, playerEntity.posY, playerEntity.posZ, playerEntity.rotationYaw, 0.0F);
-        golem.setCustomName(new StringTextComponent("profound one " + golems.size()));
+        golem.setCustomName(new StringTextComponent("" + golems.size()));
         golem.setCustomNameVisible(true);
 
         if (playerEntity.world.addEntity(golem)) {
             LOGGER.debug("Golem created.");
             golems.add(golem);
+
             return true;
         }
         LOGGER.debug("Golem could not be created.");
@@ -110,7 +109,6 @@ public class SmartGolems {
 
         for (SmartGolemEntity golem : golems) {
             golem.remove(false);
-            golem = null;
         }
 
         return true;
@@ -136,7 +134,7 @@ public class SmartGolems {
     @SubscribeEvent
     public static void onRegisterEntity(RegistryEvent.Register<EntityType<?>> event) {
         event.getRegistry().registerAll(
-                EntityType.Builder.create(SmartGolemEntity::new, EntityClassification.CREATURE)
+                EntityType.Builder.create(SmartGolemEntity::new, EntityClassification.MISC)
                         .setShouldReceiveVelocityUpdates(true).setTrackingRange(24).setUpdateInterval(60)
                         .build("smart_golem").setRegistryName(MOD_ID, "smart_golem")
         );
@@ -170,7 +168,7 @@ public class SmartGolems {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
-        new SmartGolemsCommand(event.getCommandDispatcher());
+        new CommandRegister(event.getCommandDispatcher());
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
