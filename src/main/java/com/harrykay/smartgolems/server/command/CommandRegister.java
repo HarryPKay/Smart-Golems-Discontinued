@@ -11,12 +11,13 @@ public class CommandRegister {
         dispatcher.register(
                 LiteralArgumentBuilder.<CommandSource>literal(MOD_ID)
                         .then(Spawn.register())
-                        .then(RemoveAll.register())
-                        .then(Remove.register())
+                        .then(RemoveAllGolems.register())
+                        .then(RemoveGolem.register())
                         .then(Follow.register())
                         .then(PlaceBlock.register())
-                        .then(Move.register())
-                        .then(Move.register())
+                        .then(MoveGolem.register())
+                        .then(Halt.register())
+                        .then(ShowTasks.register())
         );
     }
 }

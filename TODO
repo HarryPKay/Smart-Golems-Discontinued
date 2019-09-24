@@ -1,0 +1,18 @@
+When golems move to locations, have them stop just before it.
+adjust goal priorities
+add random goals
+creating smart golem method
+texture to distinguish between normal golems
+persistence (saving tasks, who the golem belongs to, etc)
+owner identification
+place blocks
+inventory
+build houses/mining/cutting wood/ fishing etc.
+gui alternative that call commands
+task profile
+
+extras:
+arrow/flare for calling over golems in area
+golem equipment
+carry player
+

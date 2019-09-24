@@ -5,10 +5,10 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 
-public class RemoveAll {
+public class RemoveAllGolems {
 
     static ArgumentBuilder<CommandSource, ?> register() {
-        return Commands.literal("remove-all")
+        return Commands.literal("remove-all-golems")
                 .requires(cs -> cs.hasPermissionLevel(2)) //permission
                 .executes(ctx -> {
                     SmartGolems.removeAllGolems(ctx.getSource().asPlayer());

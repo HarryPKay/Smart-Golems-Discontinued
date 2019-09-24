@@ -14,11 +14,11 @@ public class PlaceBlock {
 
     static ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("place-block").requires(cs -> cs.hasPermissionLevel(2))
-                .then(Commands.argument("name", StringArgumentType.string())
+                .then(Commands.argument("golem name", StringArgumentType.string())
                         .then(Commands.argument("block position", BlockPosArgument.blockPos())
                                 .executes(ctx -> {
 
-                                            SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, "name"));
+                                    SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, "golem name"));
 
                                             if (golemEntity == null) {
                                                 ctx.getSource().asPlayer().sendMessage(new StringTextComponent("Could not find that golem."));

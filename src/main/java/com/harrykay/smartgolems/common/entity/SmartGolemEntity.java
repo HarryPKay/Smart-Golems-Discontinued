@@ -3,18 +3,71 @@ package com.harrykay.smartgolems.common.entity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.HashMap;
 
 // follow owner goal
 public class SmartGolemEntity extends IronGolemEntity {
 
     private int placeBlockTimer = 10;
     private int goToPathTimer = 10;
+    private static final int maxTasks = 9;
+    public HashMap<Integer, String> taskNameByPriority = new HashMap<>();
+    private HashMap<Integer, Goal> tasks = new HashMap<>();
 
     public PlayerEntity focusedPlayer = null;
+
+    public void shiftGoalPriority(int amount) {
+        HashMap<Integer, String> temp = new HashMap<>();
+        for (Integer priority : taskNameByPriority.keySet()) {
+            if (priority + amount <= 9) {
+                temp.put(priority + amount, taskNameByPriority.get(priority));
+            } else {
+                removeGoal(priority);
+            }
+        }
+
+        taskNameByPriority = temp;
+    }
+
+    // May seem redundant but is needed for manipulating current tasks.
+    public void addGoal(int priority, Goal task, String name) {
+        tasks.put(priority, task);
+        taskNameByPriority.put(priority, name);
+        goalSelector.addGoal(priority, tasks.get(priority));
+    }
+
+    public boolean removeGoal(int priority) {
+        if (!tasks.containsKey(priority)) {
+            return false;
+        }
+        goalSelector.removeGoal(tasks.get(priority));
+        tasks.remove(priority);
+        taskNameByPriority.remove(priority);
+        return true;
+    }
+
+    public void removeAllGoals() {
+        for (Integer priority : tasks.keySet()) {
+            goalSelector.removeGoal(tasks.get(priority));
+        }
+        taskNameByPriority = new HashMap<>();
+        tasks = new HashMap<>();
+    }
+
+//    public void showGoals(PlayerEntity playerEntity)
+//    {
+//        for (Integer priority : goals.keySet())
+//        {
+//            goalSelector.removeGoal(goals.get(priority));
+//
+//        }
+//    }
 
     //    public MoveTowardsBlockPos(CreatureEntity creature, double speedIn, float targetMaxDistance) {
 //        this.creature = creature;

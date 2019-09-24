@@ -1,10 +1,8 @@
 package com.harrykay.smartgolems.common.entity.ai;
 
 import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
 
@@ -38,15 +36,19 @@ public class MoveTowardsPlayerGoal extends Goal {
         } else if (this.player.getDistanceSq(this.creature) < (double) (this.minDistance * this.minDistance)) {
             return false; // Is too close to follow.
         } else {
-            Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.creature, 3, 3, new Vec3d(this.player.posX, this.player.posY, this.player.posZ));
-            if (vec3d == null) {
-                return false;
-            } else {
-                this.movePosX = vec3d.x;
-                this.movePosY = vec3d.y;
-                this.movePosZ = vec3d.z;
+//            Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.creature, 3, 3, new Vec3d(this.player.posX, this.player.posY, this.player.posZ));
+//            if (vec3d == null) {
+//                return false;
+//            } else {
+//                this.movePosX = vec3d.x;
+//                this.movePosY = vec3d.y;
+//                this.movePosZ = vec3d.z;
+//                return true;
+//            }
+            this.movePosX = this.player.posX + 1;
+            this.movePosY = this.player.posY;
+            this.movePosZ = this.player.posZ + 1;
                 return true;
-            }
         }
     }
 
