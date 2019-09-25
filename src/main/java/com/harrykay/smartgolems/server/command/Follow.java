@@ -27,8 +27,8 @@ public class Follow {
 
                             golemEntity.focusedPlayer = ctx.getSource().asPlayer();
                             golemEntity.shiftGoalPriority(2);
-                            golemEntity.addGoal(0, new MoveTowardsPlayerGoal(golemEntity, 0.6D, 32.0F, 2.0F), "follow " + ctx.getSource().asPlayer().getDisplayName().getString());
-                            golemEntity.addGoal(1, new LookAtGoal(golemEntity, PlayerEntity.class, 6.0F), "look at " + ctx.getSource().asPlayer().getDisplayName().getString());
+                            golemEntity.insertGoal(0, new MoveTowardsPlayerGoal(golemEntity, 0.6D, 32.0F, 2.0F), "follow " + ctx.getSource().asPlayer().getDisplayName().getString());
+                            golemEntity.insertGoal(1, new LookAtGoal(golemEntity, PlayerEntity.class, 6.0F), "look at " + ctx.getSource().asPlayer().getDisplayName().getString());
                                     return 0;
                                 }
                         ));

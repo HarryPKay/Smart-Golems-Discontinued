@@ -1,6 +1,6 @@
 package com.harrykay.smartgolems.server.command;
 
-import com.harrykay.smartgolems.common.entity.SmartGolemEntity.SupportedTasks;
+import com.harrykay.smartgolems.common.entity.SmartGolemEntity.SurvivalSupportedTasks;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -16,7 +16,7 @@ public class ShowAvailableTasks {
                 .requires(cs -> cs.hasPermissionLevel(2)) //permission
                 .executes(ctx -> {
 
-                    for (SupportedTasks supportedTask : SupportedTasks.values()) {
+                    for (SurvivalSupportedTasks supportedTask : SurvivalSupportedTasks.values()) {
                         ctx.getSource().asPlayer().sendMessage(new StringTextComponent(supportedTask.name()));
                     }
 

@@ -17,6 +17,10 @@ public class RemoveGolem {
                 .then(Commands.argument("golem name", StringArgumentType.string())
                         .executes(ctx -> {
 
+                            if (ctx.getSource().getWorld().isRemote) {
+                                return 0;
+                            }
+
                             if (!SmartGolems.removeGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, "golem name"))) {
                                         ctx.getSource().asPlayer().sendMessage(new StringTextComponent("Could not remove that golem."));
                                     }

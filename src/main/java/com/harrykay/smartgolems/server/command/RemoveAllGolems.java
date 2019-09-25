@@ -11,6 +11,11 @@ public class RemoveAllGolems {
         return Commands.literal("remove-all-golems")
                 .requires(cs -> cs.hasPermissionLevel(2)) //permission
                 .executes(ctx -> {
+
+                    if (ctx.getSource().getWorld().isRemote) {
+                        return 0;
+                    }
+
                     SmartGolems.removeAllGolems(ctx.getSource().asPlayer());
                     return 0;
                 });

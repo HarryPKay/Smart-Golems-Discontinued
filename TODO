@@ -8,6 +8,7 @@ consider having the class inherit from golementity instead.
 
 
 GENERAL:
+notifications when overwriting, etc
 figure out how to have golems smoothly go to locations
 When golems move to locations, have them stop just before it.
 adjust goal priorities
@@ -22,6 +23,7 @@ build houses/mining/cutting wood/ fishing etc.
 gui alternative that call commands
 
 OTHER:
+items to set focus and to set custom profiles
 arrow/flare for calling over golems in area
 golem equipment
 carry player

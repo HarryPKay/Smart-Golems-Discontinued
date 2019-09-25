@@ -1,12 +1,14 @@
 package com.harrykay.smartgolems.common.entity;
 
-import net.minecraft.block.Block;
+import com.harrykay.smartgolems.common.entity.ai.MoveTowardsPlayerGoal;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
@@ -14,31 +16,83 @@ import java.util.HashMap;
 // follow owner goal
 public class SmartGolemEntity extends IronGolemEntity {
 
-    public static void createProfile(HashMap<Integer, Goal> tasks, HashMap<Integer, String> taskNameByPriority, SupportedTasks... supportedTasks) {
-
+    public SmartGolemEntity(EntityType<? extends IronGolemEntity> type, World world) {
+        super(type, world);
     }
 
-    public enum SupportedTasks {
-        // Custom
-
-        LookAtPlayer,
-        MoveTowardsBlockPosGoal,
-        MoveTowardsPlayerGoal,
-        PlaceBlockGoal,
-
-        // Vanilla
-
-        // IronGolemEntity Default
-
-        MeleeAttackGoal,
-        MoveTowardsTargetGoal,
-        MoveTowardsVillageGoal,
-        MoveThroughVillageGoal,
-        ShowVillagerFlowerGoal,
-        WaterAvoidingRandomWalkingGoal,
-        LookAtGoal,
-        LookRandomlyGoal
+    public void insertGoal(Integer priority, SurvivalSupportedTasks supportedTask) {
+        switch (supportedTask) {
+            case LookAtPlayer:
+                insertGoal(priority, new LookAtGoal(this, PlayerEntity.class, 6.0F), supportedTask.name());
+                return;
+            case MoveTowardsBlockPosGoal:
+                insertGoal(priority, null, supportedTask.name());
+                return;
+            case MoveTowardsPlayerGoal:
+                insertGoal(priority, new MoveTowardsPlayerGoal(this, 0.03D, 32.0F, 2.0F), supportedTask.name());
+                return;
+            case PlaceBlockGoal:
+                insertGoal(priority, null, supportedTask.name());
+                return;
+            case MeleeAttackGoal:
+                insertGoal(priority, new MeleeAttackGoal(this, 1.0D, true), supportedTask.name());
+                return;
+            case MoveTowardsTargetGoal:
+                insertGoal(priority, new MoveTowardsTargetGoal(this, 0.9D, 32.0F), supportedTask.name());
+                return;
+            case MoveTowardsVillageGoal:
+                insertGoal(priority, new MoveTowardsVillageGoal(this, 0.6D), supportedTask.name());
+                return;
+            case MoveThroughVillageGoal:
+                insertGoal(priority, new MoveThroughVillageGoal(this, 0.6D, false, 4, () -> {
+                    return false;
+                }), supportedTask.name());
+                return;
+            case ShowVillagerFlowerGoal:
+                insertGoal(priority, new ShowVillagerFlowerGoal(this), supportedTask.name());
+                return;
+            case WaterAvoidingRandomWalkingGoal:
+                insertGoal(priority, new WaterAvoidingRandomWalkingGoal(this, 0.6D), supportedTask.name());
+                return;
+            case LookRandomlyGoal:
+                insertGoal(priority, new LookRandomlyGoal(this), supportedTask.name());
+                return;
+        }
     }
+
+    public void swapGoal(int priorityLeft, int priorityRight) {
+        Goal taskLeft = tasks.get(priorityLeft);
+        String nameLeft = taskNameByPriority.get(priorityLeft);
+        Goal taskRight = tasks.get(priorityRight);
+        String nameRight = taskNameByPriority.get(priorityRight);
+
+        removeGoal(priorityLeft);
+        removeGoal(priorityRight);
+
+        insertGoal(priorityLeft, taskRight, nameRight);
+        insertGoal(priorityRight, taskLeft, nameLeft);
+    }
+
+//    public static boolean createProfile(SmartGolemEntity golem, HashMap<Integer, Goal> tasks, HashMap<Integer, String> taskNameByPriority, SupportedTasks... supportedTasks)
+//    {
+//        tasks = new HashMap<>();
+//        taskNameByPriority = new HashMap<>();
+//
+//        int priority = 0;
+//        for (SupportedTasks supportedTask : supportedTasks)
+//        {
+//            Goal task = parseSupportedTasks(golem, supportedTask);
+//            if (task == null)
+//            {
+//                return false;
+//            }
+//            tasks.put(priority, task);
+//            taskNameByPriority.put(priority, supportedTask.name());
+//            ++priority;
+//        }
+//
+//        return true;
+//    }
 
     public static final int maxTasks = 14;
     public HashMap<Integer, String> taskNameByPriority = new HashMap<>();
@@ -62,30 +116,32 @@ public class SmartGolemEntity extends IronGolemEntity {
         tasks = tempTasks;
     }
 
-    public void swapGoal(int priorityLeft, int priorityRight) {
-        Goal taskLeft = tasks.get(priorityLeft);
-        String nameLeft = taskNameByPriority.get(priorityLeft);
-        Goal taskRight = tasks.get(priorityRight);
-        String nameRight = taskNameByPriority.get(priorityRight);
-
-        removeGoal(priorityLeft);
-        removeGoal(priorityRight);
-
-        addGoal(priorityLeft, taskRight, nameRight);
-        addGoal(priorityRight, taskLeft, nameLeft);
-    }
-
     public void moveGoal(int priority, int newPriority) {
         Goal task = tasks.get(priority);
         String name = taskNameByPriority.get(priority);
         removeGoal(priority);
-        addGoal(newPriority, task, name);
+        insertGoal(newPriority, task, name);
     }
 
-    public void addGoal(int priority, Goal task, String name) {
+    public void insertGoal(int priority, Goal task, String name) {
+
+        if (tasks.containsKey(priority)) {
+            removeGoal(priority);
+        }
         tasks.put(priority, task);
         taskNameByPriority.put(priority, name);
-        goalSelector.addGoal(priority, tasks.get(priority));
+        goalSelector.addGoal(priority, task);
+    }
+
+    @Override
+    protected void registerGoals() {
+        // Purposefully don't call register super.
+        this.targetSelector.addGoal(1, new DefendVillageTargetGoal(this));
+        //TODO: target player/other golems?
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, MobEntity.class, 5, false, false, (p_213619_0_) -> {
+            return p_213619_0_ instanceof IMob && !(p_213619_0_ instanceof CreeperEntity);
+        }));
     }
 
     public boolean removeGoal(int priority) {
@@ -106,23 +162,6 @@ public class SmartGolemEntity extends IronGolemEntity {
         tasks = new HashMap<>();
     }
 
-//    public void showGoals(PlayerEntity playerEntity)
-//    {
-//        for (Integer priority : goals.keySet())
-//        {
-//            goalSelector.removeGoal(goals.get(priority));
-//
-//        }
-//    }
-
-    //    public MoveTowardsBlockPos(CreatureEntity creature, double speedIn, float targetMaxDistance) {
-//        this.creature = creature;
-//        this.speed = speedIn;
-//        this.maxTargetDistance = targetMaxDistance;
-//        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
-//    }
-
-
 //    private ArrayList<BlockPos> positions = new ArrayList<>();
 //    private ArrayList<Block> currentState = new ArrayList<>();
 //    private ArrayList<Block> desiredState = new ArrayList<>();
@@ -140,40 +179,41 @@ public class SmartGolemEntity extends IronGolemEntity {
 //    }
 
     //private ArrayList<BuildAction> placements = new ArrayList<>();
-
-
     //HashMap<BlockPos, Block> placements = new HashMap<>();
 
     private boolean isBuilding = false;
     private int followTimer;
 
-    public SmartGolemEntity(EntityType<? extends IronGolemEntity> type, World world) {
-        super(type, world);
-
-//        for (int i = 0; i < 9; ++i)
-//        {
-//            desiredState.add(Blocks.AIR);
-//        }
-    }
-
-    @Override
-    protected void registerGoals() {
-
-    }
-
     protected void registerAttributes() {
         super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+
+        // temp
         setPlayerCreated(true);
     }
 
-    private void aStarSearch() {
+    public enum SurvivalSupportedTasks {
+        // Custom
 
+        LookAtPlayer,
+        MoveTowardsBlockPosGoal,
+        MoveTowardsPlayerGoal,
+        PlaceBlockGoal,
+
+        // Vanilla
+
+        // IronGolemEntity Default
+
+        MeleeAttackGoal,
+        MoveTowardsTargetGoal,
+        MoveTowardsVillageGoal,
+        MoveThroughVillageGoal,
+        ShowVillagerFlowerGoal,
+        WaterAvoidingRandomWalkingGoal,
+        LookAtGoal,
+        LookRandomlyGoal
     }
 
-    private void store() {
-
-    }
 
 //    // Timer and check if has path?
 //    public void scanEnvironment()
@@ -224,75 +264,33 @@ public class SmartGolemEntity extends IronGolemEntity {
 //        }
 //    }
 
-    private void pickUp() {
-
-    }
-
-    private boolean placeBlock(BlockPos blockPos, Block block) {
-//        if (!isBuilding)
-//        {
-//            return false;
-//        }
-//
-//        if (posX == blockPos.getX() - 1 && posY == blockPos.getY() && posZ == blockPos.getZ())
-//        {
-//            System.out.println("Placing block");
-//            BlockState state = block.getDefaultState();
-//            swingArm(getActiveHand());
-//            world.destroyBlock(blockPos,true);
-//            world.setBlockState(blockPos, state);
-//        }
-//
-//        //if (posX == blockPos.getX() && posX)
-//
-//        // Retry count?
-//        if (!getNavigator().tryMoveToXYZ(blockPos.getX() - 1, blockPos.getY(), blockPos.getZ(), 2D))
-//        {
-//            System.out.println("Can't set path: placeblock()");
-//        }
-        return true;
-    }
+//    private boolean placeBlock(BlockPos blockPos, Block block) {
+////        if (!isBuilding)
+////        {
+////            return false;
+////        }
+////
+////        if (posX == blockPos.getX() - 1 && posY == blockPos.getY() && posZ == blockPos.getZ())
+////        {
+////            System.out.println("Placing block");
+////            BlockState state = block.getDefaultState();
+////            swingArm(getActiveHand());
+////            world.destroyBlock(blockPos,true);
+////            world.setBlockState(blockPos, state);
+////        }
+////
+////        //if (posX == blockPos.getX() && posX)
+////
+////        // Retry count?
+////        if (!getNavigator().tryMoveToXYZ(blockPos.getX() - 1, blockPos.getY(), blockPos.getZ(), 2D))
+////        {
+////            System.out.println("Can't set path: placeblock()");
+////        }
+//        return true;
+//    }
 
     @Override
     public void livingTick() {
         super.livingTick();
-
-//        if (this > 0) {
-//            --this.attackTimer;
-//        }
-
-
-//        if (!placements.isEmpty())
-//        {
-//            if (placeBlock(placements.get(0).blockPos, placements.get(0).block))
-//            {
-//                placements.remove(0);
-//            }
-//        }
-
-
-//        PlayerEntity player =  world.getClosestPlayer(this.posX, this.posY, this.posZ, 100,true);
-//
-//        if (player != null)
-//        {
-//            if (this.getNavigator().tryMoveToXYZ(player.posX, player.posY, player.posZ, 2))
-//            {
-////                System.out.println(getCustomName() + " is chasing " + player.posX + " "  + player.posY + " " + player.posZ);
-////                System.out.println(getType());
-//            }
-//            else
-//            {
-////                System.out.println(getCustomName() + " is not chasing");
-//            }
-//        }
     }
-
-    // Has inventory?
-
-    // Lookahead
-
-    // Actions:
-    // Place block
-    // Retrieve block
-
 }

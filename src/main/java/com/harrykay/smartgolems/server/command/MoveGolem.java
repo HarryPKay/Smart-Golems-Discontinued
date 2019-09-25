@@ -15,6 +15,7 @@ public class MoveGolem {
                         .then(Commands.argument("block position", BlockPosArgument.blockPos())
                                 .executes(ctx -> {
 
+
 //                                            SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, "golem name"));
 //
 //                                            if (golemEntity == null) {
