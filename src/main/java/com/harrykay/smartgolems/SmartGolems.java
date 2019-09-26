@@ -3,14 +3,10 @@ package com.harrykay.smartgolems;
 import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
 import com.harrykay.smartgolems.server.command.CommandSmartGolems;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -20,20 +16,20 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.harrykay.smartgolems.init.ModEntities.SMART_GOLEM;
+
 @Mod.EventBusSubscriber(modid = SmartGolems.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-@ObjectHolder(SmartGolems.MOD_ID)
+//@ObjectHolder(SmartGolems.MOD_ID)
 @Mod(SmartGolems.MOD_ID)
 public class SmartGolems {
-    @ObjectHolder("smart_golem")
-    public static final EntityType<SmartGolemEntity> SMART_GOLEM = null;
-    static final String MOD_ID = "smartgolems";
+
+    public static final String MOD_ID = "smartgolems";
     private static final Logger LOGGER = LogManager.getLogger();
     public static List<SmartGolemEntity> golems = new ArrayList<>();
 
@@ -49,6 +45,19 @@ public class SmartGolems {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public static boolean assignGolemToPlayer(SmartGolemEntity golem, PlayerEntity player) {
+        if (player == null || golem == null) {
+            return false;
+        }
+
+        if (player.world.isRemote) {
+            return false;
+        }
+
+        golems.add(golem);
+        return true;
     }
 
     public static boolean createSmartGolem(PlayerEntity playerEntity) {
@@ -114,37 +123,6 @@ public class SmartGolems {
         return true;
     }
 
-//    @SubscribeEvent
-//    public static void onClientChat(ClientChatEvent event) throws CommandSyntaxException {
-//        //.debug("onClientChat received: " + event.getMessage());
-//        System.out.println("onClientChat received: " + event.getMessage());
-//        dispatcher.execute(event.getMessage(), Minecraft.getInstance().player.getCommandSource());
-//    }
-
-    /**
-     * The actual event handler that registers the custom items.
-     *
-     * @param event The event this event handler handles
-     */
-    @SubscribeEvent
-    public static void onRegisterItems(RegistryEvent.Register<Item> event) {
-
-    }
-
-    @SubscribeEvent
-    public static void onRegisterEntity(RegistryEvent.Register<EntityType<?>> event) {
-        event.getRegistry().registerAll(
-                EntityType.Builder.create(SmartGolemEntity::new, EntityClassification.MISC)
-                        .setShouldReceiveVelocityUpdates(true).setTrackingRange(24).setUpdateInterval(60)
-                        .build("smart_golem").setRegistryName(MOD_ID, "smart_golem")
-        );
-    }
-    //public Block test = new ModBlock(Block.Properties.from(Blocks.DIRT), "test");
-
-    @SubscribeEvent
-    public void onPickUpItem(EntityItemPickupEvent event) {
-
-    }
 
     private void setup(final FMLCommonSetupEvent event) {
 

@@ -9,9 +9,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 
-public class MoveTask {
+public class SwapPriorities {
 
-    private static final String ARG_1 = "move-task";
+    private static final String ARG_1 = "swap-tasks";
     private static final String ARG_2 = "golem name";
     private static final String ARG_3 = "prioritiy no";
     private static final String ARG_4 = "with no";
@@ -37,13 +37,13 @@ public class MoveTask {
                                             }
 
                                             Integer withPriority = IntegerArgumentType.getInteger(ctx, ARG_4);
-//                                    if (priority < 0 || priority > SmartGolemEntity.maxTasks || withPriority < 0 || withPriority > SmartGolemEntity.maxTasks)
-//                                    {
-//                                        ctx.getSource().asPlayer().sendMessage(new StringTextComponent("Invalid priority range (valid range: 0-" + SmartGolemEntity.maxTasks + " inclusive)."));
-//                                        return 0;
-//                                    }
+//                                            if (priority < 0 || priority > SmartGolemEntity.maxTasks || withPriority < 0 || withPriority > SmartGolemEntity.maxTasks)
+//                                            {
+//                                                ctx.getSource().asPlayer().sendMessage(new StringTextComponent("Invalid priority range (valid range: 0-" + SmartGolemEntity.maxTasks + " inclusive)."));
+//                                                return 0;
+//                                            }
 
-                                            golemEntity.moveGoal(priority, withPriority);
+                                            golemEntity.swapGoal(priority, withPriority);
                                             return 0;
                                         }))));
     }

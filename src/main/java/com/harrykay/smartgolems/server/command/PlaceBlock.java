@@ -12,7 +12,7 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class PlaceBlock {
 
-    static ArgumentBuilder<CommandSource, ?> register() {
+    public static ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("place-block").requires(cs -> cs.hasPermissionLevel(2))
                 .then(Commands.argument("golem name", StringArgumentType.string())
                         .then(Commands.argument("block position", BlockPosArgument.blockPos())

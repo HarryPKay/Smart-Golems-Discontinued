@@ -5,6 +5,7 @@ IMPORTANT:
 Have follow, halt, etc be default profiles
 task profile
 consider having the class inherit from golementity instead.
+min distance for custom class using euclideandistance.
 
 
 GENERAL:
@@ -28,3 +29,13 @@ arrow/flare for calling over golems in area
 golem equipment
 carry player
 
+references
+vindicator has target selector for player
+
+need to make custom pumpkin for test purposes, register item.
+
+command structure
+smartgolem -> golem <golem-name> functions
+           -> all functions
+           -> group <control-group> functions
+           ->

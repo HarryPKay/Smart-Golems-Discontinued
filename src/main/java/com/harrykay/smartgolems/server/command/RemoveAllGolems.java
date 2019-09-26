@@ -7,7 +7,7 @@ import net.minecraft.command.Commands;
 
 public class RemoveAllGolems {
 
-    static ArgumentBuilder<CommandSource, ?> register() {
+    public static ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("remove-all-golems")
                 .requires(cs -> cs.hasPermissionLevel(2)) //permission
                 .executes(ctx -> {

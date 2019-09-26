@@ -8,7 +8,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 
-public class ShowAssignedTasks {
+public class GetGoals {
 
     private static final String ARG_1 = "show-assigned-tasks";
     private static final String ARG_2 = "golem name";

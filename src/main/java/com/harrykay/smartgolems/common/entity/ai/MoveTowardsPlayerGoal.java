@@ -33,21 +33,10 @@ public class MoveTowardsPlayerGoal extends Goal {
             return false;
         } else if (this.player.getDistanceSq(this.creature) > (double) (this.maxTargetDistance * this.maxTargetDistance)) {
             return false;
-        } else if (this.player.getDistanceSq(this.creature) < (double) (this.minDistance * this.minDistance)) {
-            return false; // Is too close to follow.
         } else {
-//            Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.creature, 3, 3, new Vec3d(this.player.posX, this.player.posY, this.player.posZ));
-//            if (vec3d == null) {
-//                return false;
-//            } else {
-//                this.movePosX = vec3d.x;
-//                this.movePosY = vec3d.y;
-//                this.movePosZ = vec3d.z;
-//                return true;
-//            }
-            this.movePosX = this.player.posX + 1;
+            this.movePosX = this.player.posX;
             this.movePosY = this.player.posY;
-            this.movePosZ = this.player.posZ + 1;
+            this.movePosZ = this.player.posZ;
                 return true;
         }
     }
