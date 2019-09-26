@@ -1,9 +1,6 @@
 package com.harrykay.smartgolems.server.command.selector;
 
-import com.harrykay.smartgolems.server.command.BreakBlock;
-import com.harrykay.smartgolems.server.command.Follow;
-import com.harrykay.smartgolems.server.command.Forget;
-import com.harrykay.smartgolems.server.command.MoveTo;
+import com.harrykay.smartgolems.server.command.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.command.CommandSource;
@@ -19,6 +16,8 @@ public class Golem {
                         .then(Follow.register())
                         .then(Forget.register())
                         .then(Forget.register())
-                        .then(BreakBlock.register()));
+                        .then(BreakBlock.register())
+                        .then(ActLikeIronGolems.register())
+                );
     }
 }

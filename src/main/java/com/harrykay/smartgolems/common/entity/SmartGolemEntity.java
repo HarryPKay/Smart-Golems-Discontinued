@@ -4,8 +4,10 @@ import com.harrykay.smartgolems.common.entity.ai.BreakBlockPosGoal;
 import com.harrykay.smartgolems.common.entity.ai.MoveTowardsBlockPosGoal;
 import com.harrykay.smartgolems.common.entity.ai.MoveTowardsPlayerGoal;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +23,27 @@ public class SmartGolemEntity extends IronGolemEntity {
     }
 
     public BlockPos targetBlockPos = null;
+
+    public static void actLikeIronGolems(SmartGolemEntity smartGolemEntity) {
+        smartGolemEntity.shiftGoalPriority(SmartGolemEntity.maxTasks);
+
+
+        smartGolemEntity.goalSelector.addGoal(1, new MeleeAttackGoal(smartGolemEntity, 1.0D, true));
+        smartGolemEntity.goalSelector.addGoal(2, new MoveTowardsTargetGoal(smartGolemEntity, 0.9D, 32.0F));
+        smartGolemEntity.goalSelector.addGoal(2, new MoveTowardsVillageGoal(smartGolemEntity, 0.6D));
+        smartGolemEntity.goalSelector.addGoal(3, new MoveThroughVillageGoal(smartGolemEntity, 0.6D, false, 4, () -> {
+            return false;
+        }));
+        smartGolemEntity.goalSelector.addGoal(5, new ShowVillagerFlowerGoal(smartGolemEntity));
+        smartGolemEntity.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(smartGolemEntity, 0.6D));
+        smartGolemEntity.goalSelector.addGoal(7, new LookAtGoal(smartGolemEntity, PlayerEntity.class, 6.0F));
+        smartGolemEntity.goalSelector.addGoal(8, new LookRandomlyGoal(smartGolemEntity));
+        smartGolemEntity.targetSelector.addGoal(1, new DefendVillageTargetGoal(smartGolemEntity));
+        smartGolemEntity.targetSelector.addGoal(2, new HurtByTargetGoal(smartGolemEntity));
+        smartGolemEntity.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(smartGolemEntity, MobEntity.class, 5, false, false, (p_213619_0_) -> {
+            return p_213619_0_ instanceof IMob && !(p_213619_0_ instanceof CreeperEntity);
+        }));
+    }
 
     public void follow(PlayerEntity playerEntity) {
         focusedPlayer = playerEntity;

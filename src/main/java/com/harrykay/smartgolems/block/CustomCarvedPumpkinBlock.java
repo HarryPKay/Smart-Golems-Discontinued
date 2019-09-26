@@ -47,7 +47,6 @@ public class CustomCarvedPumpkinBlock extends HorizontalBlock {
 
     private void trySpawnGolem(World world, BlockPos blockPos) {
 
-
         BlockPattern.PatternHelper blockpattern$patternhelper = this.getSmartGolemBlockPattern().match(world, blockPos);
         if (blockpattern$patternhelper != null) {
             for (int j = 0; j < this.getSmartGolemBlockPattern().getPalmLength(); ++j) {
@@ -71,8 +70,6 @@ public class CustomCarvedPumpkinBlock extends HorizontalBlock {
             for (ServerPlayerEntity serverplayerentity1 : world.getEntitiesWithinAABB(ServerPlayerEntity.class, smartGolemEntity.getBoundingBox().grow(5.0D))) {
                 CriteriaTriggers.SUMMONED_ENTITY.trigger(serverplayerentity1, smartGolemEntity);
             }
-
-            System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
 
             for (int i1 = 0; i1 < this.getSmartGolemBlockPattern().getPalmLength(); ++i1) {
                 for (int j1 = 0; j1 < this.getSmartGolemBlockPattern().getThumbLength(); ++j1) {
