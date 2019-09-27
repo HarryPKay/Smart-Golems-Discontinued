@@ -46,11 +46,12 @@ public class DoCreeperThings {
                             boolean found = false;
                             for (PlayerEntity player : ctx.getSource().getWorld().getPlayers()) {
                                 if (player.getDisplayName().getString().equals(StringArgumentType.getString(ctx, PLAYER_NAME_ARG))) {
-                                    golemEntity.moveTo(player);
+                                    golemEntity.doCreeperThings(player);
                                     return 1;
                                 }
                             }
                             ctx.getSource().asPlayer().sendMessage(new StringTextComponent(PLAYER_NOT_FOUND));
+
                             return 0;
                         }));
     }

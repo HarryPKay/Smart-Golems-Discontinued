@@ -9,29 +9,28 @@ priorities:
 3. commands
 4. astar search for scaffolding
 
-Temp using removeAllGoals to make sure that next given command is top priority. Change this so that commands are
-not overiding as an option maybe.
-ability to record build actions
+astar actions:
+place block
+destroy block in way that is not in the list
+build scaffold
+move to cell
 
+maybe have golem move away from the building location at the start.
+scan world at position and add coordinates for finding initial state
+
+
+ability to record build actions
+it looks like minecraft is saving data using writeAdditional
 task profile
 consider having the class inherit from golementity instead.
-have golem break blocks that are at the same hight of it
-have a list of blockpos to break and move to instead.
-
+should explode if only can see player
 
 GENERAL:
 notifications when overwriting, etc
-figure out how to have golems smoothly go to locations
-When golems move to locations, have them stop just before it.
-adjust goal priorities
-way to show tasks assigned that doesn't show compound goals.
 
-
-ingame creation of smart golems
 texture to distinguish between normal golems
 persistence (saving tasks, who the golem belongs to, etc)
 owner identification
-place blocks
 inventory
 build houses/mining/cutting wood/ fishing etc.
 gui alternative that call commands
@@ -44,12 +43,4 @@ carry player
 
 references
 vindicator has target selector for player
-having multiple of the same goals seems to cause errors.
 
-need to make custom pumpkin for test purposes, register item.
-
-command structure
-smartgolem -> golem <golem-name> functions
-           -> all functions
-           -> group <control-group> functions
-           ->

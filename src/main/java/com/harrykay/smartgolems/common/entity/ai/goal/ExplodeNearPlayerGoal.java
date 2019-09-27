@@ -6,18 +6,17 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.EnumSet;
 
-public class FollowPlayerGoal extends Goal {
+public class ExplodeNearPlayerGoal extends Goal {
     private final SmartGolemEntity creature;
     private final double speed;
     private final float maxTargetDistance;
-    //TODO: minDistance
     private final float minDistance;
     private PlayerEntity player;
     private double movePosX;
     private double movePosY;
     private double movePosZ;
 
-    public FollowPlayerGoal(SmartGolemEntity golem, double speedIn, float targetMaxDistance, float minDistance) {
+    public ExplodeNearPlayerGoal(SmartGolemEntity golem, double speedIn, float targetMaxDistance, float minDistance) {
         this.creature = golem;
         this.speed = speedIn;
         this.maxTargetDistance = targetMaxDistance;
@@ -38,7 +37,7 @@ public class FollowPlayerGoal extends Goal {
             this.movePosX = this.player.posX;
             this.movePosY = this.player.posY;
             this.movePosZ = this.player.posZ;
-                return true;
+            return true;
         }
     }
 
@@ -60,6 +59,11 @@ public class FollowPlayerGoal extends Goal {
      * Execute a one shot task or start executing a continuous task
      */
     public void startExecuting() {
+
+        if (this.player.getDistanceSq(this.creature) <= (double) (minDistance * minDistance)) {
+            this.creature.explode();
+        }
+
         this.creature.getNavigator().tryMoveToXYZ(this.movePosX, this.movePosY, this.movePosZ, this.speed);
     }
 }

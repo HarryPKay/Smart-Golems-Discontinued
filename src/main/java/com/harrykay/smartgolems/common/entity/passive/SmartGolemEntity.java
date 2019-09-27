@@ -1,10 +1,12 @@
 package com.harrykay.smartgolems.common.entity.passive;
 
+import com.harrykay.smartgolems.common.entity.ai.goal.ExplodeNearPlayerGoal;
 import com.harrykay.smartgolems.common.entity.ai.goal.FollowPlayerGoal;
 import com.harrykay.smartgolems.common.entity.ai.goal.MoveToBlockPosGoal;
 import com.harrykay.smartgolems.common.entity.ai.goal.PlaceBlockGoal;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -12,20 +14,72 @@ import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.*;
+
+import static com.harrykay.smartgolems.SmartGolems.golems;
+import static java.lang.Math.pow;
 
 // follow owner goal
 public class SmartGolemEntity extends IronGolemEntity {
 
+    private final long ResetPriorityCounterAtAmount = (long) pow(2, 8 * 7) - 1;
     public PriorityQueue<Action> actions = new PriorityQueue<>(new ActionComparator());
     public ArrayList<Action> houseActions = new ArrayList<>();
+    public HashMap<Integer, Integer> goalDependency = new HashMap<>();
+    public int placeTimer = 10;
+    private long priorityCounter = 0;
+    private long priorityInitialOffset = 10;
+
     private int temp = 0;
+
+    public void explode() {
+        if (!this.world.isRemote) {
+            Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+            int explosionRadius = 3;
+            this.world.createExplosion(this, this.posX, this.posY, this.posZ, (float) explosionRadius * 2, explosion$mode);
+            spawnLingeringCloud();
+            suicide();
+        }
+    }
+
+    private void spawnLingeringCloud() {
+        Collection<EffectInstance> collection = this.getActivePotionEffects();
+        if (!collection.isEmpty()) {
+            AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(this.world, this.posX, this.posY, this.posZ);
+            areaeffectcloudentity.setRadius(2.5F);
+            areaeffectcloudentity.setRadiusOnUse(-0.5F);
+            areaeffectcloudentity.setWaitTime(10);
+            areaeffectcloudentity.setDuration(areaeffectcloudentity.getDuration() / 2);
+            areaeffectcloudentity.setRadiusPerTick(-areaeffectcloudentity.getRadius() / (float) areaeffectcloudentity.getDuration());
+
+            for (EffectInstance effectinstance : collection) {
+                areaeffectcloudentity.addEffect(new EffectInstance(effectinstance));
+            }
+
+            this.world.addEntity(areaeffectcloudentity);
+        }
+
+    }
+
+    public void doCreeperThings(PlayerEntity entity) {
+        focusedPlayer = entity;
+        if (!taskNameByPriority.containsValue("ExplodeNearPlayerGoal")) {
+            removeAllGoals();
+            insertGoal(1, new ExplodeNearPlayerGoal(this, 1.2D, 32.0F, 2.0F), "ExplodeNearPlayerGoal");
+        }
+    }
+
+    public void suicide() {
+        this.dead = true;
+        setHealth(0);
+        this.remove();
+    }
 
     public void initHouseActions() {
         houseActions.clear();
@@ -75,12 +129,21 @@ public class SmartGolemEntity extends IronGolemEntity {
         }
     }
 
+    @Override
+    public void onDeath(DamageSource cause) {
+        golems.remove(this);
+        super.onDeath(cause);
+    }
+
+
+
     public void follow(PlayerEntity playerEntity) {
 
         focusedPlayer = playerEntity;
         if (!taskNameByPriority.containsValue("FollowPlayer") || !taskNameByPriority.containsValue("LookAtPlayer")) {
             removeAllGoals();
             insertGoal(1, new FollowPlayerGoal(this, 1D, 32.0F, 2.0F), "followPlayer");
+            insertGoal(2, new LookAtGoal(this, PlayerEntity.class, 6.0F), "LookAt");
         }
     }
 
@@ -96,9 +159,13 @@ public class SmartGolemEntity extends IronGolemEntity {
         // Check if command exists, then just chance target block?
 
         if (!taskNameByPriority.containsValue("MoveToBlockPos") || !taskNameByPriority.containsValue("PlaceBlock")) {
-            removeAllGoals();
+
+            goalDependency.put(1, 2);
+            goalDependency.put(2, 3);
             insertGoal(1, new MoveToBlockPosGoal(this, 1D, 6F), "MoveToBlockPos");
-            insertGoal(2, new PlaceBlockGoal(this, 7F, 7F), "PlaceBlock");
+            insertGoal(2, new PlaceBlockGoal(this, 7F), "PlaceBlock");
+            insertGoal(3, new WaterAvoidingRandomWalkingGoal(this, 1D), "WaterAvoidingRandomWalkingGoal");
+            // third goal move randomly if ontop?
         }
 
         actions.add(new Action(temp++, ActionType.PLACE_BLOCK, blockPos, block));
@@ -182,6 +249,7 @@ public class SmartGolemEntity extends IronGolemEntity {
         }
     }
 
+    //TODO fix up removal and display of commands, etc.
     public void shiftGoalPriority(Integer amount) {
 
         HashMap<Integer, String> tempNameByPriority = new HashMap<>();
@@ -224,6 +292,15 @@ public class SmartGolemEntity extends IronGolemEntity {
         // Purposefully don't call register super.
 
     }
+
+//    @Override
+//    public void livingTick() {
+//    super.livingTick();
+//      if (this.placeTimer > 0)
+//        --this.placeTimer;
+//    }
+
+
 
     public boolean removeGoal(int priority) {
         if (!tasks.containsKey(priority)) {

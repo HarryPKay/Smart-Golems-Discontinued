@@ -24,7 +24,7 @@ public class Suicide {
                                 return 0;
                             }
 
-                            golemEntity.setHealth(0);
+                    golemEntity.suicide();
                             return 1;
                         }
                 );

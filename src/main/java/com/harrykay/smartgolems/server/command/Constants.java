@@ -12,6 +12,7 @@ public class Constants {
 
     /* SUB COMMANDS */
 
+    public static final String PATROL_COMMAND = "patrol-command";
     public static final String BUILD_COMMAND = "build";
     public static final String CHARGE_COMMAND = "charge";
     public static final String DO_CREEPER_THINGS_COMMAND = "do-creeper-things";

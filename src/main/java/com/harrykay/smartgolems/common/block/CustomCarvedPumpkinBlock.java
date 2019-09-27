@@ -64,17 +64,19 @@ public class CustomCarvedPumpkinBlock extends HorizontalBlock {
             smartGolemEntity.setCustomName(new StringTextComponent(SmartGolems.golems.size() + ""));
             smartGolemEntity.setCustomNameVisible(true);
             //TODO: check that the golem can also be assigned.
-            assignGolemToPlayer(smartGolemEntity, world.getClosestPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
-            world.addEntity(smartGolemEntity);
 
-            for (ServerPlayerEntity serverplayerentity1 : world.getEntitiesWithinAABB(ServerPlayerEntity.class, smartGolemEntity.getBoundingBox().grow(5.0D))) {
-                CriteriaTriggers.SUMMONED_ENTITY.trigger(serverplayerentity1, smartGolemEntity);
-            }
 
-            for (int i1 = 0; i1 < this.getSmartGolemBlockPattern().getPalmLength(); ++i1) {
-                for (int j1 = 0; j1 < this.getSmartGolemBlockPattern().getThumbLength(); ++j1) {
-                    CachedBlockInfo cachedblockinfo1 = blockpattern$patternhelper.translateOffset(i1, j1, 0);
-                    world.notifyNeighbors(cachedblockinfo1.getPos(), Blocks.AIR);
+            if (world.addEntity(smartGolemEntity)) {
+                assignGolemToPlayer(smartGolemEntity, world.getClosestPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+                for (ServerPlayerEntity serverplayerentity1 : world.getEntitiesWithinAABB(ServerPlayerEntity.class, smartGolemEntity.getBoundingBox().grow(5.0D))) {
+                    CriteriaTriggers.SUMMONED_ENTITY.trigger(serverplayerentity1, smartGolemEntity);
+                }
+
+                for (int i1 = 0; i1 < this.getSmartGolemBlockPattern().getPalmLength(); ++i1) {
+                    for (int j1 = 0; j1 < this.getSmartGolemBlockPattern().getThumbLength(); ++j1) {
+                        CachedBlockInfo cachedblockinfo1 = blockpattern$patternhelper.translateOffset(i1, j1, 0);
+                        world.notifyNeighbors(cachedblockinfo1.getPos(), Blocks.AIR);
+                    }
                 }
             }
         }
