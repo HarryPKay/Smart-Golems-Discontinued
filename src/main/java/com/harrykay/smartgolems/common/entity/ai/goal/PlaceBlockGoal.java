@@ -1,6 +1,6 @@
-package com.harrykay.smartgolems.common.entity.ai;
+package com.harrykay.smartgolems.common.entity.ai.goal;
 
-import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
+import com.harrykay.smartgolems.common.entity.passive.SmartGolemEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.ai.goal.Goal;

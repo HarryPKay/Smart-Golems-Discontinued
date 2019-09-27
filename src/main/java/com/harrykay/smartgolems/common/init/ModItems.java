@@ -1,4 +1,4 @@
-package com.harrykay.smartgolems.init;
+package com.harrykay.smartgolems.common.init;
 
 import com.harrykay.smartgolems.SmartGolems;
 import net.minecraftforge.registries.ObjectHolder;

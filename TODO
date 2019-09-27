@@ -2,6 +2,13 @@ BUGS:
 none found
 
 IMPORTANT:
+
+priorities:
+1. persistence
+2. move compound goals as one unit
+3. commands
+4. astar search for scaffolding
+
 Temp using removeAllGoals to make sure that next given command is top priority. Change this so that commands are
 not overiding as an option maybe.
 ability to record build actions
@@ -10,7 +17,6 @@ task profile
 consider having the class inherit from golementity instead.
 have golem break blocks that are at the same hight of it
 have a list of blockpos to break and move to instead.
-
 
 
 GENERAL:

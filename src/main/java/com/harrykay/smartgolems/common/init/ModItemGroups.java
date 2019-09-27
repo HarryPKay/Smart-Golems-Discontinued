@@ -1,4 +1,4 @@
-package com.harrykay.smartgolems.init;
+package com.harrykay.smartgolems.common.init;
 
 //public final class ModItemGroups {
 //

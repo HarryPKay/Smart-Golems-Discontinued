@@ -1,8 +1,8 @@
 package com.harrykay.smartgolems;
 
 import com.google.common.base.Preconditions;
-import com.harrykay.smartgolems.block.CustomCarvedPumpkinBlock;
-import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
+import com.harrykay.smartgolems.common.block.CustomCarvedPumpkinBlock;
+import com.harrykay.smartgolems.common.entity.passive.SmartGolemEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

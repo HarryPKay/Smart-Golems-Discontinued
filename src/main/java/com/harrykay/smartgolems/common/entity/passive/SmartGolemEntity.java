@@ -1,8 +1,8 @@
-package com.harrykay.smartgolems.common.entity;
+package com.harrykay.smartgolems.common.entity.passive;
 
-import com.harrykay.smartgolems.common.entity.ai.FollowPlayerGoal;
-import com.harrykay.smartgolems.common.entity.ai.MoveToBlockPosGoal;
-import com.harrykay.smartgolems.common.entity.ai.PlaceBlockGoal;
+import com.harrykay.smartgolems.common.entity.ai.goal.FollowPlayerGoal;
+import com.harrykay.smartgolems.common.entity.ai.goal.MoveToBlockPosGoal;
+import com.harrykay.smartgolems.common.entity.ai.goal.PlaceBlockGoal;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -28,6 +28,7 @@ public class SmartGolemEntity extends IronGolemEntity {
     private int temp = 0;
 
     public void initHouseActions() {
+        houseActions.clear();
         houseActions.add(new Action(1, ActionType.PLACE_BLOCK, new BlockPos(0, 4, 0), Blocks.COBBLESTONE));
         houseActions.add(new Action(2, ActionType.PLACE_BLOCK, new BlockPos(1, 4, 0), Blocks.COBBLESTONE));
         houseActions.add(new Action(3, ActionType.PLACE_BLOCK, new BlockPos(2, 4, 0), Blocks.COBBLESTONE));
@@ -55,6 +56,15 @@ public class SmartGolemEntity extends IronGolemEntity {
         houseActions.add(new Action(21, ActionType.PLACE_BLOCK, new BlockPos(0, 6, 2), Blocks.COBBLESTONE));
         houseActions.add(new Action(22, ActionType.PLACE_BLOCK, new BlockPos(1, 6, 2), Blocks.COBBLESTONE));
         houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 6, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 7, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 8, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 9, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 10, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 11, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 12, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 13, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 14, 2), Blocks.COBBLESTONE));
+        houseActions.add(new Action(23, ActionType.PLACE_BLOCK, new BlockPos(2, 15, 2), Blocks.COBBLESTONE));
 
     }
 
@@ -68,34 +78,30 @@ public class SmartGolemEntity extends IronGolemEntity {
     public void follow(PlayerEntity playerEntity) {
 
         focusedPlayer = playerEntity;
-        removeAllGoals();
-        if (!taskNameByPriority.containsValue("FollowPlayer")) {
-            insertGoal(1, new FollowPlayerGoal(this, 0.6D, 32.0F, 2.0F), "followPlayer");
-        }
-        if (!taskNameByPriority.containsValue("LookAtPlayer")) {
-            insertGoal(2, new LookAtGoal(this, PlayerEntity.class, 6.0F), "LookAtPlayer");
+        if (!taskNameByPriority.containsValue("FollowPlayer") || !taskNameByPriority.containsValue("LookAtPlayer")) {
+            removeAllGoals();
+            insertGoal(1, new FollowPlayerGoal(this, 1D, 32.0F, 2.0F), "followPlayer");
         }
     }
 
     public void moveTo(BlockPos blockPos) {
-        actions.add(new Action(temp++, ActionType.MOVE_TO, blockPos, null));
-        removeAllGoals();
         if (!taskNameByPriority.containsValue("MoveToBlockPos")) {
-            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 1F), "MoveToBlockPos");
+            removeAllGoals();
+            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 0.17F), "MoveToBlockPos");
         }
+        actions.add(new Action(temp++, ActionType.MOVE_TO, blockPos, null));
     }
 
     public void PlaceBlock(BlockPos blockPos, Block block) {
         // Check if command exists, then just chance target block?
-        actions.add(new Action(temp++, ActionType.PLACE_BLOCK, blockPos, block));
-        //removeAllGoals();
-        if (!taskNameByPriority.containsValue("MoveToBlockPos")) {
-            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 4F), "MoveToBlockPos");
+
+        if (!taskNameByPriority.containsValue("MoveToBlockPos") || !taskNameByPriority.containsValue("PlaceBlock")) {
+            removeAllGoals();
+            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 6F), "MoveToBlockPos");
+            insertGoal(2, new PlaceBlockGoal(this, 7F, 7F), "PlaceBlock");
         }
 
-        if (!taskNameByPriority.containsValue("PlaceBlock")) {
-            insertGoal(2, new PlaceBlockGoal(this, 5F, 3F), "PlaceBlock");
-        }
+        actions.add(new Action(temp++, ActionType.PLACE_BLOCK, blockPos, block));
     }
 
 
@@ -128,6 +134,7 @@ public class SmartGolemEntity extends IronGolemEntity {
         for (Integer priority : tasks.keySet()) {
             tasks.remove(priority);
         }
+        actions.clear();
         tasks.clear();
         taskNameByPriority.clear();
     }
@@ -212,18 +219,11 @@ public class SmartGolemEntity extends IronGolemEntity {
         goalSelector.addGoal(priority, task);
     }
 
-//    @Override
-//    protected void registerGoals() {
-//        // Purposefully don't call register super.
-//
-//
-//        this.targetSelector.addGoal(1, new DefendVillageTargetGoal(this));
-//        //TODO: target player/other golems?
-//        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
-//        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, MobEntity.class, 5, false, false, (p_213619_0_) -> {
-//            return p_213619_0_ instanceof IMob && !(p_213619_0_ instanceof CreeperEntity);
-//        }));
-//    }
+    @Override
+    protected void registerGoals() {
+        // Purposefully don't call register super.
+
+    }
 
     public boolean removeGoal(int priority) {
         if (!tasks.containsKey(priority)) {
@@ -232,6 +232,7 @@ public class SmartGolemEntity extends IronGolemEntity {
         goalSelector.removeGoal(tasks.get(priority));
         tasks.remove(priority);
         taskNameByPriority.remove(priority);
+        actions.clear();
         return true;
     }
 

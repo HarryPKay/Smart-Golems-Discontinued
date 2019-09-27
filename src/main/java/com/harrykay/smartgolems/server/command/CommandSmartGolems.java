@@ -6,13 +6,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 
 public class CommandSmartGolems {
-    static final String COMMAND_NAME = "smartgolems";
+
+    public static final String COMMAND_NAME = "smartgolems";
 
     public CommandSmartGolems(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
                 LiteralArgumentBuilder.<CommandSource>literal(COMMAND_NAME)
-                        .then(Spawn.register())
-                        .then(RemoveAllGolems.register())
                         .then(Golem.register())
         );
 

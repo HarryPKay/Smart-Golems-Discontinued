@@ -1,8 +1,8 @@
-package com.harrykay.smartgolems.init;
+package com.harrykay.smartgolems.common.init;
 
 import com.harrykay.smartgolems.ModUtil;
 import com.harrykay.smartgolems.SmartGolems;
-import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
+import com.harrykay.smartgolems.common.entity.passive.SmartGolemEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.registries.ObjectHolder;
 

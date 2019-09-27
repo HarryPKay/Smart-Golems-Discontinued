@@ -1,10 +1,9 @@
 package com.harrykay.smartgolems;
 
-import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
+import com.harrykay.smartgolems.common.entity.passive.SmartGolemEntity;
 import com.harrykay.smartgolems.server.command.CommandSmartGolems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,8 +20,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.harrykay.smartgolems.init.ModEntities.SMART_GOLEM;
 
 @Mod.EventBusSubscriber(modid = SmartGolems.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 //@ObjectHolder(SmartGolems.MOD_ID)
@@ -60,42 +57,6 @@ public class SmartGolems {
         return true;
     }
 
-    public static boolean createSmartGolem(PlayerEntity playerEntity) {
-        if (playerEntity.world.isRemote) {
-            return false;
-        }
-        SmartGolemEntity golem = new SmartGolemEntity(SMART_GOLEM, playerEntity.world);
-
-        golem.setLocationAndAngles(playerEntity.posX, playerEntity.posY, playerEntity.posZ, playerEntity.rotationYaw, 0.0F);
-        golem.setCustomName(new StringTextComponent("" + golems.size()));
-        golem.setCustomNameVisible(true);
-
-        if (playerEntity.world.addEntity(golem)) {
-            LOGGER.debug("Golem created.");
-            golems.add(golem);
-
-            return true;
-        }
-        LOGGER.debug("Golem could not be created.");
-        return false;
-    }
-
-    public static boolean removeGolem(PlayerEntity playerEntity, String customName) {
-        if (playerEntity.world.isRemote) {
-            return false;
-        }
-
-        for (SmartGolemEntity golem : golems) {
-            if (golem.getDisplayName().getString().equals(customName)) {
-                golem.remove(false);
-                golems.remove(golem);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static SmartGolemEntity getGolem(PlayerEntity playerEntity, String customName) {
         if (playerEntity.world.isRemote) {
             return null;
@@ -109,20 +70,6 @@ public class SmartGolems {
 
         return null;
     }
-
-    public static boolean removeAllGolems(PlayerEntity playerEntity) {
-        if (playerEntity.world.isRemote) {
-            return false;
-        }
-
-
-        for (SmartGolemEntity golem : golems) {
-            golem.remove(false);
-        }
-
-        return true;
-    }
-
 
     private void setup(final FMLCommonSetupEvent event) {
 

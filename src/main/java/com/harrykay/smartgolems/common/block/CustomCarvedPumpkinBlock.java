@@ -1,7 +1,7 @@
-package com.harrykay.smartgolems.block;
+package com.harrykay.smartgolems.common.block;
 
 import com.harrykay.smartgolems.SmartGolems;
-import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
+import com.harrykay.smartgolems.common.entity.passive.SmartGolemEntity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 import java.util.function.Predicate;
 
 import static com.harrykay.smartgolems.SmartGolems.assignGolemToPlayer;
-import static com.harrykay.smartgolems.init.ModEntities.SMART_GOLEM;
+import static com.harrykay.smartgolems.common.init.ModEntities.SMART_GOLEM;
 
 public class CustomCarvedPumpkinBlock extends HorizontalBlock {
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
