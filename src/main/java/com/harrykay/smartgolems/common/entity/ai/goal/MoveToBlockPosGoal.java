@@ -7,8 +7,6 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
 
-import static java.lang.Math.pow;
-
 public class MoveToBlockPosGoal extends Goal {
     private final SmartGolemEntity creature;
     private final double speed;
@@ -38,13 +36,17 @@ public class MoveToBlockPosGoal extends Goal {
             return false;
         }
 
-        if (MathHelpers.euclideanDistanceSq(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) < pow(minDistance, 2)) {
+        if (MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) < minDistance) {
             return false;
         }
 
         this.movePosX = blockPos.getX();
         this.movePosY = blockPos.getY();
         this.movePosZ = blockPos.getZ();
+
+        if (creature.actions.peek().actionType == SmartGolemEntity.ActionType.MOVE_TO) {
+            creature.actions.poll();
+        }
 
         return true;
     }
@@ -56,22 +58,9 @@ public class MoveToBlockPosGoal extends Goal {
 
         if (this.creature.actions.isEmpty()) {
             return false;
-        } else return !this.creature.getNavigator().noPath();
+        }
 
-//        BlockPos blockPos = creature.actions.peek() != null ? creature.actions.peek().blockPos : null;
-//        if (blockPos == null) {
-//            return false;
-//        }
-//
-//        SmartGolemEntity.ActionType actionType = creature.actions.peek() != null ? creature.actions.peek().actionType : null;
-//        if (actionType == null) {
-//            return false;
-//        }
-//
-//        if (MathHelpers.euclideanDistanceSq(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) < pow(minDistance, 2)) {
-//            return false;
-//        }
-
+        return !this.creature.getNavigator().noPath();
     }
 
     /**

@@ -14,14 +14,10 @@ public class LookAtBlockPos extends Goal {
     protected final MobEntity entity;
     protected final float maxDistance;
     protected final Class<? extends LivingEntity> watchedClass;
-    protected final EntityPredicate field_220716_e;
+    protected final EntityPredicate entityPredicate;
     private final float chance;
     protected Entity closestEntity;
     private int lookTime;
-
-    public LookAtBlockPos(MobEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance) {
-        this(entityIn, watchTargetClass, maxDistance, 0.02F);
-    }
 
     public LookAtBlockPos(MobEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance, float chanceIn) {
         this.entity = entityIn;
@@ -30,11 +26,11 @@ public class LookAtBlockPos extends Goal {
         this.chance = chanceIn;
         this.setMutexFlags(EnumSet.of(Goal.Flag.LOOK));
         if (watchTargetClass == PlayerEntity.class) {
-            this.field_220716_e = (new EntityPredicate()).setDistance(maxDistance).allowFriendlyFire().allowInvulnerable().setSkipAttackChecks().setCustomPredicate((p_220715_1_) -> {
+            this.entityPredicate = (new EntityPredicate()).setDistance(maxDistance).allowFriendlyFire().allowInvulnerable().setSkipAttackChecks().setCustomPredicate((p_220715_1_) -> {
                 return EntityPredicates.notRiding(entityIn).test(p_220715_1_);
             });
         } else {
-            this.field_220716_e = (new EntityPredicate()).setDistance(maxDistance).allowFriendlyFire().allowInvulnerable().setSkipAttackChecks();
+            this.entityPredicate = (new EntityPredicate()).setDistance(maxDistance).allowFriendlyFire().allowInvulnerable().setSkipAttackChecks();
         }
 
     }
@@ -51,9 +47,9 @@ public class LookAtBlockPos extends Goal {
             }
 
             if (this.watchedClass == PlayerEntity.class) {
-                this.closestEntity = this.entity.world.getClosestPlayer(this.field_220716_e, this.entity, this.entity.posX, this.entity.posY + (double) this.entity.getEyeHeight(), this.entity.posZ);
+                this.closestEntity = this.entity.world.getClosestPlayer(this.entityPredicate, this.entity, this.entity.posX, this.entity.posY + (double) this.entity.getEyeHeight(), this.entity.posZ);
             } else {
-                this.closestEntity = this.entity.world.func_225318_b(this.watchedClass, this.field_220716_e, this.entity, this.entity.posX, this.entity.posY + (double) this.entity.getEyeHeight(), this.entity.posZ, this.entity.getBoundingBox().grow(this.maxDistance, 3.0D, this.maxDistance));
+                this.closestEntity = this.entity.world.func_225318_b(this.watchedClass, this.entityPredicate, this.entity, this.entity.posX, this.entity.posY + (double) this.entity.getEyeHeight(), this.entity.posZ, this.entity.getBoundingBox().grow(this.maxDistance, 3.0D, this.maxDistance));
             }
 
             return this.closestEntity != null;
@@ -91,6 +87,7 @@ public class LookAtBlockPos extends Goal {
      * Keep ticking a continuous task that has already been started
      */
     public void tick() {
+
         this.entity.getLookController().func_220679_a(this.closestEntity.posX, this.closestEntity.posY + (double) this.closestEntity.getEyeHeight(), this.closestEntity.posZ);
         --this.lookTime;
     }

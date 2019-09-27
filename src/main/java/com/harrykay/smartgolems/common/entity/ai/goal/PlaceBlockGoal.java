@@ -8,7 +8,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
-import static java.lang.Math.pow;
+
 
 public class PlaceBlockGoal extends Goal {
     private final SmartGolemEntity creature;
@@ -28,6 +28,8 @@ public class PlaceBlockGoal extends Goal {
             return false;
         } else if (this.creature.actions.peek().block == null || this.creature.actions.peek().blockPos == null) {
             return false;
+        } else if (this.creature.actions.peek().actionType != SmartGolemEntity.ActionType.PLACE_BLOCK) {
+            return false;
         } else {
 
             BlockPos blockPos = creature.actions.peek().blockPos;
@@ -37,7 +39,7 @@ public class PlaceBlockGoal extends Goal {
                 return false;
             }
 
-            return !(MathHelpers.euclideanDistanceSq(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) > pow(minDistance, 2));
+            return !(MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) > minDistance);
         }
     }
 
@@ -54,6 +56,10 @@ public class PlaceBlockGoal extends Goal {
             return false;
         }
 
+        if (MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) > minDistance) {
+            return false;
+        }
+
         AxisAlignedBB axisalignedbb = PRESSURE_AABB.offset(blockPos);
         return this.creature.world.getEntitiesWithinAABBExcludingEntity(null, axisalignedbb).isEmpty();
     }
@@ -66,31 +72,51 @@ public class PlaceBlockGoal extends Goal {
     }
 
     public void tick() {
-        if (this.creature.placeTimer > 0) {
-            --this.creature.placeTimer;
-            return;
-        }
 
         BlockPos blockPos = this.creature.actions.peek() != null ? this.creature.actions.peek().blockPos : null;
         if (blockPos == null) {
             return;
         }
+        this.creature.getLookController().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 180, 180);
+        if (this.creature.placeTimer > 0) {
+            --this.creature.placeTimer;
+            return;
+        }
+
+
         Block block = this.creature.actions.peek() != null ? this.creature.actions.peek().block : null;
         if (block == null) {
             return;
         }
+
 
         this.creature.placeTimer = 10;
 
         AxisAlignedBB axisalignedbb = PRESSURE_AABB.offset(blockPos);
         //TODO check if destroyable
         if (this.creature.world.getEntitiesWithinAABBExcludingEntity(null, axisalignedbb).isEmpty()) {
+
+
+//            this.creature.setActiveHand(Hand.MAIN_HAND);
+//            this.creature.swingArm(Hand.MAIN_HAND);
+            //this.creature.playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1.0F, 1.0F);
+
+
+
             if (this.creature.world.getBlockState(blockPos).getBlock() != Blocks.AIR) {
                 this.creature.world.destroyBlock(blockPos, false);
+                if (!this.creature.world.getPlayers().isEmpty()) {
+                    this.creature.attackEntityAsMob(this.creature.world.getPlayers().get(0));
+                }
             }
 
             if (this.creature.world.setBlockState(blockPos, block.getDefaultState())) {
+                System.out.println("abc: " + MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos));
+                this.creature.addVelocity(0, 0.5, 0);
                 this.creature.actions.poll();
+                if (!this.creature.world.getPlayers().isEmpty()) {
+                    this.creature.attackEntityAsMob(this.creature.world.getPlayers().get(0));
+                }
             }
         }
     }

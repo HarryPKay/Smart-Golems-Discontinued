@@ -155,6 +155,11 @@ public class SmartGolemEntity extends IronGolemEntity {
         actions.add(new Action(temp++, ActionType.MOVE_TO, blockPos, null));
     }
 
+    public SmartGolemEntity(EntityType<? extends IronGolemEntity> type, World world) {
+        super(type, world);
+
+    }
+
     public void PlaceBlock(BlockPos blockPos, Block block) {
         // Check if command exists, then just chance target block?
 
@@ -162,18 +167,13 @@ public class SmartGolemEntity extends IronGolemEntity {
 
             goalDependency.put(1, 2);
             goalDependency.put(2, 3);
-            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 6F), "MoveToBlockPos");
+            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 6.5F), "MoveToBlockPos");
             insertGoal(2, new PlaceBlockGoal(this, 7F), "PlaceBlock");
-            insertGoal(3, new WaterAvoidingRandomWalkingGoal(this, 1D), "WaterAvoidingRandomWalkingGoal");
+            insertGoal(3, new WaterAvoidingRandomWalkingGoal(this, 1D, 1F), "WaterAvoidingRandomWalkingGoal");
             // third goal move randomly if ontop?
         }
 
         actions.add(new Action(temp++, ActionType.PLACE_BLOCK, blockPos, block));
-    }
-
-
-    public SmartGolemEntity(EntityType<? extends IronGolemEntity> type, World world) {
-        super(type, world);
     }
 
     //public BlockPos targetBlockPos = null;
