@@ -2,19 +2,25 @@ package com.harrykay.smartgolems.common.entity.ai;
 
 import com.harrykay.smartgolems.common.entity.SmartGolemEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.EnumSet;
 
-public class MoveTowardsBlockPosGoal extends Goal {
+public class FollowPlayerGoal extends Goal {
     private final SmartGolemEntity creature;
     private final double speed;
+    private final float maxTargetDistance;
+    private final float minDistance;
+    private PlayerEntity player;
     private double movePosX;
     private double movePosY;
     private double movePosZ;
 
-    public MoveTowardsBlockPosGoal(SmartGolemEntity golem, double speedIn) {
+    public FollowPlayerGoal(SmartGolemEntity golem, double speedIn, float targetMaxDistance, float minDistance) {
         this.creature = golem;
         this.speed = speedIn;
+        this.maxTargetDistance = targetMaxDistance;
+        this.minDistance = minDistance;
         this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
@@ -22,15 +28,16 @@ public class MoveTowardsBlockPosGoal extends Goal {
      * Returns whether the EntityAIBase should begin execution.
      */
     public boolean shouldExecute() {
-        if (this.creature.targetBlockPos == null) {
+        this.player = this.creature.focusedPlayer;
+        if (this.player == null) {
             return false;
-        } else if (creature.posX == creature.targetBlockPos.getX() && creature.posY == creature.targetBlockPos.getY() && creature.posZ == creature.targetBlockPos.getZ()) {
+        } else if (this.player.getDistanceSq(this.creature) > (double) (this.maxTargetDistance * this.maxTargetDistance)) {
             return false;
         } else {
-            this.movePosX = creature.targetBlockPos.getX();
-            this.movePosY = creature.targetBlockPos.getY();
-            this.movePosZ = creature.targetBlockPos.getZ();
-            return true;
+            this.movePosX = this.player.posX;
+            this.movePosY = this.player.posY;
+            this.movePosZ = this.player.posZ;
+                return true;
         }
     }
 
@@ -38,14 +45,14 @@ public class MoveTowardsBlockPosGoal extends Goal {
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     public boolean shouldContinueExecuting() {
-        return creature.targetBlockPos != null && !this.creature.getNavigator().noPath() && creature.posX != creature.targetBlockPos.getX() && creature.posY != creature.targetBlockPos.getY() && creature.posZ != creature.targetBlockPos.getZ();
+        return !this.creature.getNavigator().noPath() && this.player.isAlive() && this.player.getDistanceSq(this.creature) < (double) (this.maxTargetDistance * this.maxTargetDistance);
     }
 
     /**
      * Reset the task's internal state. Called when this task is interrupted by another one
      */
     public void resetTask() {
-
+        this.player = null;
     }
 
     /**

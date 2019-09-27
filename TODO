@@ -2,10 +2,15 @@ BUGS:
 none found
 
 IMPORTANT:
-Have follow, halt, etc be default profiles
+Temp using removeAllGoals to make sure that next given command is top priority. Change this so that commands are
+not overiding as an option maybe.
+ability to record build actions
+
 task profile
 consider having the class inherit from golementity instead.
-min distance for custom class using euclideandistance.
+have golem break blocks that are at the same hight of it
+have a list of blockpos to break and move to instead.
+
 
 
 GENERAL:
@@ -13,6 +18,8 @@ notifications when overwriting, etc
 figure out how to have golems smoothly go to locations
 When golems move to locations, have them stop just before it.
 adjust goal priorities
+way to show tasks assigned that doesn't show compound goals.
+
 
 ingame creation of smart golems
 texture to distinguish between normal golems
@@ -31,6 +38,7 @@ carry player
 
 references
 vindicator has target selector for player
+having multiple of the same goals seems to cause errors.
 
 need to make custom pumpkin for test purposes, register item.
 

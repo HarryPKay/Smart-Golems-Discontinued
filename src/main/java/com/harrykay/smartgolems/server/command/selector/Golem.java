@@ -16,8 +16,9 @@ public class Golem {
                         .then(Follow.register())
                         .then(Forget.register())
                         .then(Forget.register())
-                        .then(BreakBlock.register())
+                        .then(PlaceBlock.register())
                         .then(ActLikeIronGolems.register())
+                        .then(Build.register())
                 );
     }
 }

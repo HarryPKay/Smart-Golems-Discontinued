@@ -10,7 +10,7 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class GetGoals {
 
-    private static final String ARG_1 = "show-assigned-tasks";
+    private static final String ARG_1 = "show-goals";
     private static final String ARG_2 = "golem name";
 
     static ArgumentBuilder<CommandSource, ?> register() {
