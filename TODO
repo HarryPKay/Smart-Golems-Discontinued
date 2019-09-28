@@ -6,8 +6,11 @@ IMPORTANT:
 priorities:
 1. persistence
 2. move compound goals as one unit
-3. commands
+3. other commands
 4. astar search for scaffolding
+
+6. opencv to scan images and convert to blueprint readable by code.
+7. check that you can actually place blocks according to game rules
 
 astar actions:
 place block

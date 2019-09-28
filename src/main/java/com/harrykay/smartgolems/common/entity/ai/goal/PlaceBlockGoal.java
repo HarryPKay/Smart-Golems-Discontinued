@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class PlaceBlockGoal extends Goal {
     private final SmartGolemEntity creature;
-    protected static final AxisAlignedBB PRESSURE_AABB = new AxisAlignedBB(0.0D, 0.0D, 0D, 1D, 3D, 1D);
+    protected static final AxisAlignedBB PRESSURE_AABB = new AxisAlignedBB(0.0D, 0.0D, 0D, 1D, 4D, 1D);
     private double minDistance;
 
     public PlaceBlockGoal(SmartGolemEntity golem, double minDistance) {
