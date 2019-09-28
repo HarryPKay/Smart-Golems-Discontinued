@@ -4,6 +4,7 @@ import com.harrykay.smartgolems.common.entity.ai.goal.ExplodeNearPlayerGoal;
 import com.harrykay.smartgolems.common.entity.ai.goal.FollowPlayerGoal;
 import com.harrykay.smartgolems.common.entity.ai.goal.MoveToBlockPosGoal;
 import com.harrykay.smartgolems.common.entity.ai.goal.PlaceBlockGoal;
+import com.harrykay.smartgolems.common.entity.ai.search.Action;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.AreaEffectCloudEntity;
@@ -16,6 +17,8 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -33,7 +36,6 @@ public class SmartGolemEntity extends IronGolemEntity {
 
     private final long ResetPriorityCounterAtAmount = (long) pow(2, 8 * 7) - 1;
     public PriorityQueue<Action> actions = new PriorityQueue<>(new ActionComparator());
-    public ArrayList<Action> houseActions = new ArrayList<>();
     public HashMap<Integer, Integer> goalDependency = new HashMap<>();
     public int placeTimer = 10;
     private long priorityCounter = 0;
@@ -86,7 +88,7 @@ public class SmartGolemEntity extends IronGolemEntity {
 
     public void initHouseActions() {
         //System.out.println("Entry");
-        houseActions.clear();
+        actions.clear();
         boolean isReadingY = false;
         try {
             //System.out.println("loop");
@@ -95,6 +97,8 @@ public class SmartGolemEntity extends IronGolemEntity {
             double y = 0;
             double z = 0;
             int priority = 0;
+            Direction direction = Direction.NORTH;
+            Rotation rotation = Rotation.NONE;
             while (line != null) {
                 //System.out.println("Line read:");
                 //System.out.println(line);
@@ -106,7 +110,7 @@ public class SmartGolemEntity extends IronGolemEntity {
 
                 if (isReadingY) {
                     isReadingY = false;
-                    y = Integer.parseInt(line) + 5;
+                    y = Integer.parseInt(line) + 4;
                     z = 0;
                     line = reader.readLine();
                     continue;
@@ -115,68 +119,65 @@ public class SmartGolemEntity extends IronGolemEntity {
                 StringTokenizer stringTokenizer = new StringTokenizer(line, ",");
                 for (int x = 0; stringTokenizer.hasMoreTokens(); ++x) {
                     switch (stringTokenizer.nextToken()) {
+                        case "n":
+                            --x;
+                            //direction = Direction.NORTH;
+                            rotation = Rotation.NONE;
+                            break;
+                        case "e":
+                            --x;
+                            //direction = Direction.EAST;
+                            rotation = Rotation.CLOCKWISE_90;
+                            break;
+                        case "w":
+                            --x;
+                            //direction = Direction.WEST;
+                            rotation = Rotation.COUNTERCLOCKWISE_90;
+                            break;
+                        case "s":
+                            --x;
+                            //direction = Direction.SOUTH;
+                            rotation = Rotation.CLOCKWISE_180;
+                            break;
                         case "1":
-                            houseActions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.COBBLESTONE));
+                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.COBBLESTONE, rotation, direction));
                             break;
                         case "2":
-                            houseActions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.OAK_WOOD));
+                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.OAK_WOOD, rotation, direction));
                             break;
                         case "3":
-                            houseActions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.GLASS));
+                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.GLASS, rotation, direction));
                             break;
                         case "4":
-                            houseActions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_DOOR));
+                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_DOOR, rotation, direction));
                             break;
                         case "5":
-                            houseActions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_STAIRS));
+                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_STAIRS, rotation, direction));
+                            break;
+                        case "6":
+                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DIRT, rotation, direction));
                             break;
                         default:
                             //System.out.println("nothing added");
                     }
-
                 }
                 ++z;
                 ++priority;
                 line = reader.readLine();
             }
             reader.close();
-
-//            for (Action action : houseActions)
-//            {
-//                System.out.println("Action (x,y,z)" + action.blockPos + " block: " + action.block.getRegistryName());
-//            }
-
         } catch (IOException e) {
             //System.out.println("test");
             e.printStackTrace();
         }
-
-
-//        houseActions.add(new Action(1, ActionType.PLACE_BLOCK, new BlockPos(0, 4, 0), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(2, ActionType.PLACE_BLOCK, new BlockPos(1, 4, 0), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(3, ActionType.PLACE_BLOCK, new BlockPos(2, 4, 0), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(4, ActionType.PLACE_BLOCK, new BlockPos(0, 4, 1), Blocks.COBBLESTONE));
-//        //houseActions.add(new Action(1, ActionType.PLACE_BLOCK, new BlockPos(1,0,1), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(5, ActionType.PLACE_BLOCK, new BlockPos(2, 4, 1), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(6, ActionType.PLACE_BLOCK, new BlockPos(0, 4, 2), Blocks.COBBLESTONE));
-//        //houseActions.add(new Action(1, ActionType.PLACE_BLOCK, new BlockPos(1,0,2), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(7, ActionType.PLACE_BLOCK, new BlockPos(2, 4, 2), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(8, ActionType.PLACE_BLOCK, new BlockPos(0, 5, 0), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(9, ActionType.PLACE_BLOCK, new BlockPos(1, 5, 0), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(10, ActionType.PLACE_BLOCK, new BlockPos(2, 5, 0), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(11, ActionType.PLACE_BLOCK, new BlockPos(0, 5, 1), Blocks.COBBLESTONE));
-//        //houseActions.add(new Action(1, ActionType.PLACE_BLOCK, new BlockPos(1,1,1), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(12, ActionType.PLACE_BLOCK, new BlockPos(2, 5, 1), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(13, ActionType.PLACE_BLOCK, new BlockPos(0, 5, 2), Blocks.COBBLESTONE));
-//        //houseActions.add(new Action(1, ActionType.PLACE_BLOCK, new BlockPos(1,1,2), Blocks.COBBLESTONE));
-//        houseActions.add(new Action(14, ActionType.PLACE_BLOCK, new BlockPos(2, 5, 2), Blocks.COBBLESTONE));
     }
 
     public void buildHouse() {
         initHouseActions();
-        for (Action action : houseActions) {
-            PlaceBlock(action.blockPos, action.block);
-        }
+        PlaceBlock();
+//        for (Action action : houseActions) {
+//            PlaceBlock(action.blockPos, action.block);
+//        }
     }
 
     @Override
@@ -188,7 +189,6 @@ public class SmartGolemEntity extends IronGolemEntity {
     public enum tasks {
         Follow
     }
-
 
 
     public void follow(PlayerEntity playerEntity) {
@@ -206,7 +206,7 @@ public class SmartGolemEntity extends IronGolemEntity {
             removeAllGoals();
             insertGoal(1, new MoveToBlockPosGoal(this, 1D, 0.17F), "MoveToBlockPos");
         }
-        actions.add(new Action(temp++, ActionType.MOVE_TO, blockPos, null));
+        actions.add(new Action(temp++, ActionType.MOVE_TO, blockPos, null, null, null));
     }
 
     public SmartGolemEntity(EntityType<? extends IronGolemEntity> type, World world) {
@@ -223,10 +223,21 @@ public class SmartGolemEntity extends IronGolemEntity {
             goalDependency.put(2, 3);
             insertGoal(1, new MoveToBlockPosGoal(this, 1D, 6.5F), "MoveToBlockPos");
             insertGoal(2, new PlaceBlockGoal(this, 7F), "PlaceBlock");
-            insertGoal(3, new WaterAvoidingRandomWalkingGoal(this, 1D, 1F), "WaterAvoidingRandomWalkingGoal");
+            insertGoal(3, new WaterAvoidingRandomWalkingGoal(this, 1D, 50F), "WaterAvoidingRandomWalkingGoal");
             // third goal move randomly if ontop?
         }
-        actions.add(new Action(temp++, ActionType.PLACE_BLOCK, blockPos, block));
+        actions.add(new Action(temp++, ActionType.PLACE_BLOCK, blockPos, block, null, null));
+    }
+
+    public void PlaceBlock() {
+        if (!taskNameByPriority.containsValue("MoveToBlockPos") || !taskNameByPriority.containsValue("PlaceBlock")) {
+            goalDependency.put(1, 2);
+            goalDependency.put(2, 3);
+            insertGoal(1, new MoveToBlockPosGoal(this, 1D, 6.5F), "MoveToBlockPos");
+            insertGoal(2, new PlaceBlockGoal(this, 7F), "PlaceBlock");
+            insertGoal(3, new WaterAvoidingRandomWalkingGoal(this, 1D, 100F), "WaterAvoidingRandomWalkingGoal");
+            // third goal move randomly if ontop?
+        }
     }
 
     //public BlockPos targetBlockPos = null;
@@ -355,7 +366,6 @@ public class SmartGolemEntity extends IronGolemEntity {
 //    }
 
 
-
     public boolean removeGoal(int priority) {
         if (!tasks.containsKey(priority)) {
             return false;
@@ -367,19 +377,6 @@ public class SmartGolemEntity extends IronGolemEntity {
         return true;
     }
 
-    public static class Action {
-        public int priority;
-        public ActionType actionType;
-        public BlockPos blockPos = null;
-        public Block block = null;
-
-        Action(int priority, ActionType actionType, BlockPos blockPos, Block block) {
-            this.priority = priority;
-            this.actionType = actionType;
-            this.blockPos = blockPos;
-            this.block = block;
-        }
-    }
 
     protected void registerAttributes() {
         super.registerAttributes();

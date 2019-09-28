@@ -22,6 +22,7 @@ maybe have golem move away from the building location at the start.
 scan world at position and add coordinates for finding initial state
 
 
+doors are placed weirdly
 ability to record build actions
 it looks like minecraft is saving data using writeAdditional
 task profile

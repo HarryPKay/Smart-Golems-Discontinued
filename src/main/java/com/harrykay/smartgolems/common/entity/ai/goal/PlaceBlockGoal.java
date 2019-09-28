@@ -9,7 +9,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 
-
 public class PlaceBlockGoal extends Goal {
     private final SmartGolemEntity creature;
     protected static final AxisAlignedBB PRESSURE_AABB = new AxisAlignedBB(0.0D, 0.0D, 0D, 1D, 4D, 1D);
@@ -71,52 +70,52 @@ public class PlaceBlockGoal extends Goal {
         //this.creature.placeTimer = 3;
     }
 
+    public void placeAnimation() {
+        if (!this.creature.world.getPlayers().isEmpty()) {
+            this.creature.addVelocity(0, 0.5, 0);
+            this.creature.attackEntityAsMob(this.creature.world.getPlayers().get(0));
+        }
+    }
+
     public void tick() {
 
         BlockPos blockPos = this.creature.actions.peek() != null ? this.creature.actions.peek().blockPos : null;
         if (blockPos == null) {
             return;
         }
-        this.creature.getLookController().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 180, 180);
+        this.creature.getLookController().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 270, 270);
         if (this.creature.placeTimer > 0) {
             --this.creature.placeTimer;
             return;
         }
-
 
         Block block = this.creature.actions.peek() != null ? this.creature.actions.peek().block : null;
         if (block == null) {
             return;
         }
 
-
         this.creature.placeTimer = 10;
 
+        // Check placement location empty
         AxisAlignedBB axisalignedbb = PRESSURE_AABB.offset(blockPos);
-        //TODO check if destroyable
         if (this.creature.world.getEntitiesWithinAABBExcludingEntity(null, axisalignedbb).isEmpty()) {
 
-
-//            this.creature.setActiveHand(Hand.MAIN_HAND);
-//            this.creature.swingArm(Hand.MAIN_HAND);
-            //this.creature.playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1.0F, 1.0F);
-
-
-
+            // TODO: Check against a list of blocks that shouldn't be destroyed.
             if (this.creature.world.getBlockState(blockPos).getBlock() != Blocks.AIR) {
                 this.creature.world.destroyBlock(blockPos, false);
-                if (!this.creature.world.getPlayers().isEmpty()) {
-                    this.creature.attackEntityAsMob(this.creature.world.getPlayers().get(0));
-                }
-            }
 
-            if (this.creature.world.setBlockState(blockPos, block.getDefaultState())) {
-                System.out.println("abc: " + MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos));
-                this.creature.addVelocity(0, 0.5, 0);
-                this.creature.actions.poll();
-                if (!this.creature.world.getPlayers().isEmpty()) {
-                    this.creature.attackEntityAsMob(this.creature.world.getPlayers().get(0));
+                // Apply animation.
+                placeAnimation();
+            } else if (this.creature.world.setBlockState(blockPos, block.getDefaultState())) {
+
+                // Apply rotation
+                if (this.creature.actions.peek() != null && this.creature.actions.peek().rotation != null) {
+                    this.creature.world.setBlockState(blockPos, this.creature.world.getBlockState(blockPos).rotate(this.creature.world, blockPos, this.creature.actions.peek().rotation).getBlockState());
                 }
+
+                // Apply animation
+                this.creature.actions.poll();
+                placeAnimation();
             }
         }
     }

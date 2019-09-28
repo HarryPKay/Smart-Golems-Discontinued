@@ -27,9 +27,12 @@ public class MoveToBlockPosGoal extends Goal {
      * Returns whether the EntityAIBase should begin execution.
      */
     public boolean shouldExecute() {
+
         if (this.creature.actions.isEmpty()) {
             return false;
         }
+
+        //++creature.actions.peek().priority;
 
         BlockPos blockPos = creature.actions.peek().blockPos;
         if (blockPos == null) {
@@ -47,6 +50,8 @@ public class MoveToBlockPosGoal extends Goal {
         if (creature.actions.peek().actionType == SmartGolemEntity.ActionType.MOVE_TO) {
             creature.actions.poll();
         }
+
+        //--creature.actions.peek().priority;
 
         return true;
     }
