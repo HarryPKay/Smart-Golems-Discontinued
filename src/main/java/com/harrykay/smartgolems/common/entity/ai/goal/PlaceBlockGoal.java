@@ -30,7 +30,6 @@ public class PlaceBlockGoal extends Goal {
         } else if (this.creature.actions.peek().actionType != SmartGolemEntity.ActionType.PLACE_BLOCK) {
             return false;
         } else {
-
             BlockPos blockPos = creature.actions.peek().blockPos;
 
             AxisAlignedBB axisalignedbb = PRESSURE_AABB.offset(blockPos);

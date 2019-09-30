@@ -12,6 +12,15 @@ priorities:
 6. opencv to scan images and convert to blueprint readable by code.
 7. check that you can actually place blocks according to game rules
 
+before resorting to a star, can try the following:
+have a goal for building dirt blocks, remember the where they are so that it can remove them
+only allow building below it.
+lowest blocks have highest priority
+limit how much it is allowed to fall
+prioritize as well on a spiral pattern
+
+could also calculate scaffolding in the area
+
 astar actions:
 place block
 destroy block in way that is not in the list

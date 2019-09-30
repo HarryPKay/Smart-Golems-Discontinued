@@ -1,10 +1,6 @@
 package com.harrykay.smartgolems.common.entity.passive;
 
-import com.harrykay.smartgolems.common.entity.ai.goal.ExplodeNearPlayerGoal;
-import com.harrykay.smartgolems.common.entity.ai.goal.FollowPlayerGoal;
-import com.harrykay.smartgolems.common.entity.ai.goal.MoveToBlockPosGoal;
-import com.harrykay.smartgolems.common.entity.ai.goal.PlaceBlockGoal;
-import com.harrykay.smartgolems.common.entity.ai.search.Action;
+import com.harrykay.smartgolems.common.entity.ai.goal.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.AreaEffectCloudEntity;
@@ -22,6 +18,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -89,7 +86,10 @@ public class SmartGolemEntity extends IronGolemEntity {
     public void initHouseActions() {
         //System.out.println("Entry");
         actions.clear();
-        boolean isReadingY = false;
+
+        //TODO: move into its own class
+        //TODO: read into an array first and add scaffolding
+        //TODO: look into json
         try {
             //System.out.println("loop");
             BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\user\\AppData\\Roaming\\.minecraft\\assets\\blueprint.txt"));
@@ -97,13 +97,38 @@ public class SmartGolemEntity extends IronGolemEntity {
             double y = 0;
             double z = 0;
             int priority = 0;
+            boolean isReadingY = false;
+            boolean isMapping = false;
             Direction direction = Direction.NORTH;
+            HashMap<String, Block> numberToBlock = new HashMap<>();
+
             Rotation rotation = Rotation.NONE;
+            String modid = "minecraft";
             while (line != null) {
                 //System.out.println("Line read:");
                 //System.out.println(line);
                 if (line.startsWith("y")) {
                     isReadingY = true;
+                    line = reader.readLine();
+                    continue;
+                }
+
+                if (line.startsWith("m")) {
+                    isMapping = !isMapping;
+                    line = reader.readLine();
+                    continue;
+                }
+
+                if (isMapping) {
+                    StringTokenizer stringTokenizer = new StringTokenizer(line, ",");
+                    String number = stringTokenizer.nextToken();
+                    String blockName = stringTokenizer.nextToken();
+                    for (final Block block : ForgeRegistries.BLOCKS.getValues()) {
+                        if (Objects.requireNonNull(block.getRegistryName()).toString().equals(modid + ":" + blockName)) {
+                            System.out.println("mapping " + number + " to " + block.getRegistryName());
+                            numberToBlock.put(number, block);
+                        }
+                    }
                     line = reader.readLine();
                     continue;
                 }
@@ -118,7 +143,8 @@ public class SmartGolemEntity extends IronGolemEntity {
 
                 StringTokenizer stringTokenizer = new StringTokenizer(line, ",");
                 for (int x = 0; stringTokenizer.hasMoreTokens(); ++x) {
-                    switch (stringTokenizer.nextToken()) {
+                    String token = stringTokenizer.nextToken();
+                    switch (token) {
                         case "n":
                             --x;
                             //direction = Direction.NORTH;
@@ -139,26 +165,32 @@ public class SmartGolemEntity extends IronGolemEntity {
                             //direction = Direction.SOUTH;
                             rotation = Rotation.CLOCKWISE_180;
                             break;
-                        case "1":
-                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.COBBLESTONE, rotation, direction));
-                            break;
-                        case "2":
-                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.OAK_WOOD, rotation, direction));
-                            break;
-                        case "3":
-                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.GLASS, rotation, direction));
-                            break;
-                        case "4":
-                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_DOOR, rotation, direction));
-                            break;
-                        case "5":
-                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_STAIRS, rotation, direction));
-                            break;
-                        case "6":
-                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DIRT, rotation, direction));
-                            break;
+//                        case "1":
+//                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.COBBLESTONE, rotation, direction));
+//                            break;
+//                        case "2":
+//                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.OAK_WOOD, rotation, direction));
+//                            break;
+//                        case "3":
+//                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.GLASS, rotation, direction));
+//                            break;
+//                        case "4":
+//                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_DOOR, rotation, direction));
+//                            break;
+//                        case "5":
+//                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DARK_OAK_STAIRS, rotation, direction));
+//                            break;
+//                        case "6":
+//                            actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), Blocks.DIRT, rotation, direction));
+//                            break;
                         default:
-                            //System.out.println("nothing added");
+                            // TODO
+                            if (numberToBlock.containsKey(token) && numberToBlock.get(token) != Blocks.AIR) {
+                                System.out.println("adding " + token);
+                                actions.add(new Action(priority, ActionType.PLACE_BLOCK, new BlockPos(x, y, z), numberToBlock.get(token), rotation, direction));
+                            } else {
+                                System.out.println("Unrecognized value given: " + token);
+                            }
                     }
                 }
                 ++z;
@@ -302,17 +334,7 @@ public class SmartGolemEntity extends IronGolemEntity {
 
     public PlayerEntity focusedPlayer = null;
 
-    public static class ActionComparator implements Comparator<Action> {
 
-        // ascending order.
-        public int compare(Action s1, Action s2) {
-            if (s1.priority > s2.priority)
-                return 1;
-            else if (s1.priority < s2.priority)
-                return -1;
-            return 0;
-        }
-    }
 
     //TODO fix up removal and display of commands, etc.
     public void shiftGoalPriority(Integer amount) {

@@ -16,6 +16,10 @@ public class MathHelpers {
         return sqrt(euclideanDistanceSq(blockPos1, blockPos2));
     }
 
+    public static int manhattenDistance(int x, int y, int z, int x2, int y2, int z2) {
+        return Math.abs(x - x2) + Math.abs(y - y2) + Math.abs(z - z2);
+    }
+
 //    public static BlockPos normalizedDifference(BlockPos blockPos1, BlockPos blockPos2)
 //    {
 //        double x
