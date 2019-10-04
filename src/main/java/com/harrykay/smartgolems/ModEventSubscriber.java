@@ -47,12 +47,6 @@ public final class ModEventSubscriber {
 //                        .build("smart_golem"), "smart_golem")
                 setup(EntityType.Builder.create(SmartGolemEntity::new, EntityClassification.MISC).build("smart_golem"), "smart_golem")
         );
-
-//        event.getRegistry().registerAll(
-//                EntityType.Builder.create(SmartGolemEntity::new, EntityClassification.MISC)
-//                        .setShouldReceiveVelocityUpdates(true).setTrackingRange(24).setUpdateInterval(60)
-//                        .build("smart_golem").setRegistryName(MOD_ID, "smart_golem")
-//        );
         LOGGER.debug("Registered Entities");
     }
 

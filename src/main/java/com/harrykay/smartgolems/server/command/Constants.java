@@ -39,6 +39,7 @@ public class Constants {
 
     /* ARGUMENTS */
 
+    public static final String FILE_NAME_ARG = "file name";
     public static final String GOLEM_NAME_ARG = "golem name";
     public static final String PLAYER_NAME_ARG = "player name";
     public static final String PRIORITY_ARG = "priority";

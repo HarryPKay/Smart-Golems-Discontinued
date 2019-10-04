@@ -1,8 +1,8 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 import java.util.ArrayList;
 
-import static com.harrykay.smartgolems.common.entity.ai.pathfind.StateHelpers.*;
+import static com.harrykay.smartgolems.pathfinding.StateHelpers.*;
 
 public class Action {
     public Position move;

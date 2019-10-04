@@ -1,4 +1,4 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 public class Constants {
     public static int size = 15;

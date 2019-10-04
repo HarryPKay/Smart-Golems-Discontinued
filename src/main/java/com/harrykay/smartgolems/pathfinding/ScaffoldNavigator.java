@@ -1,12 +1,12 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-import static com.harrykay.smartgolems.common.entity.ai.pathfind.Action.getActions;
+import static com.harrykay.smartgolems.pathfinding.Action.getActions;
 
 
-public class AstarSearch {
+public class ScaffoldNavigator {
 
     public static ArrayList<Action> findSolution(Goal goal, State initialState) {
 

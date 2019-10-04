@@ -6,17 +6,19 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
+import java.util.PriorityQueue;
 
-public class MoveToBlockPosGoal extends Goal {
+public class MoveToPositionGoal extends Goal {
     private final SmartGolemEntity creature;
     private final double speed;
     private double movePosX;
     private double movePosY;
     private double movePosZ;
     private double minDistance;
+    public PriorityQueue<Action> positions = new PriorityQueue<>(new ActionComparator());
+    private int priorityCounter = 0;
 
-
-    public MoveToBlockPosGoal(SmartGolemEntity golem, double speedIn, double minDistance) {
+    public MoveToPositionGoal(SmartGolemEntity golem, double speedIn, double minDistance) {
         this.creature = golem;
         this.speed = speedIn;
         this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
@@ -28,16 +30,11 @@ public class MoveToBlockPosGoal extends Goal {
      */
     public boolean shouldExecute() {
 
-        if (this.creature.actions.isEmpty()) {
+        if (positions.isEmpty()) {
             return false;
         }
 
-        //++creature.actions.peek().priority;
-
-        BlockPos blockPos = creature.actions.peek().blockPos;
-        if (blockPos == null) {
-            return false;
-        }
+        BlockPos blockPos = positions.peek().blockPos;
 
         if (MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), blockPos) < minDistance) {
             return false;
@@ -47,12 +44,6 @@ public class MoveToBlockPosGoal extends Goal {
         this.movePosY = blockPos.getY();
         this.movePosZ = blockPos.getZ();
 
-        if (creature.actions.peek().actionType == SmartGolemEntity.ActionType.MOVE_TO) {
-            creature.actions.poll();
-        }
-
-        //--creature.actions.peek().priority;
-
         return true;
     }
 
@@ -61,11 +52,21 @@ public class MoveToBlockPosGoal extends Goal {
      */
     public boolean shouldContinueExecuting() {
 
-        if (this.creature.actions.isEmpty()) {
+        if (positions.isEmpty()) {
             return false;
         }
 
-        return !this.creature.getNavigator().noPath();
+        if (MathHelpers.euclideanDistance(new BlockPos(creature.posX, creature.posY, creature.posZ), positions.peek().blockPos) < minDistance) {
+            positions.poll();
+            return false;
+        }
+
+        if (this.creature.getNavigator().noPath()) {
+            positions.peek().priority++;
+            return false;
+        }
+
+        return true;
     }
 
     /**

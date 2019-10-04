@@ -1,20 +1,11 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 import static com.harrykay.smartgolems.MathHelpers.manhattenDistance;
 
 public class StateHelpers {
 
-//    //world, initial position, desired position
-//    public State createState()
-//    {
-//        // set size
-//        // scan in the blocks preset
-//        // set height dimensions
-//        return new State();
-//    }
-
     public static boolean isEnoughRoom(State state, Position position) {
-        if (Constants.entityHeight + position.y >= state.size) {
+        if (Constants.entityHeight + position.y >= state.xSize) {
             return false;
         }
 
@@ -42,9 +33,9 @@ public class StateHelpers {
     }
 
     public static void printState(State state) {
-        for (int y = 0; y < state.size; ++y) {
-            for (int z = 0; z < state.size; ++z) {
-                for (int x = 0; x < state.size; ++x) {
+        for (int y = 0; y < state.xSize; ++y) {
+            for (int z = 0; z < state.ySize; ++z) {
+                for (int x = 0; x < state.zSize; ++x) {
 
                     if (state.entityPosition.equals(new Position(x, y, z))) {
                         System.out.print("x ");
@@ -58,23 +49,23 @@ public class StateHelpers {
         }
     }
 
-    public static void clearState(MCObjects[][][] state, int size) {
-        for (int y = 0; y < size; ++y) {
-            for (int z = 0; z < size; ++z) {
-                for (int x = 0; x < size; ++x) {
+    public static void clearState(MCObjects[][][] state, int xSize, int ySize, int zSize) {
+        for (int y = 0; y < xSize; ++y) {
+            for (int z = 0; z < ySize; ++z) {
+                for (int x = 0; x < zSize; ++x) {
                     state[x][y][z] = MCObjects.AIR;
                 }
             }
         }
     }
 
-    public static void makeFloor(MCObjects[][][] state, int size, int y) {
-        for (int z = 0; z < size; ++z) {
-            for (int x = 0; x < size; ++x) {
-                state[x][y][z] = MCObjects.BLOCK;
-            }
-        }
-    }
+//    public static void makeFloor(MCObjects[][][] state, int size, int y) {
+//        for (int z = 0; z < size; ++z) {
+//            for (int x = 0; x < size; ++x) {
+//                state[x][y][z] = MCObjects.BLOCK;
+//            }
+//        }
+//    }
 
     public static boolean hasAdjacentBlock(State state, Position position) {
         for (Move.Directions direction : Move.adjacentOffsets) {
@@ -103,8 +94,8 @@ public class StateHelpers {
         return position.x >= 0
                 && position.y >= 0
                 && position.z >= 0
-                && position.x < state.size
-                && position.y < state.size
-                && position.z < state.size;
+                && position.x < state.xSize
+                && position.y < state.ySize
+                && position.z < state.zSize;
     }
 }

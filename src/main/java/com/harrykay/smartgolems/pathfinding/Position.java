@@ -1,4 +1,4 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 public class Position {
 
@@ -24,17 +24,13 @@ public class Position {
 
     @Override
     public boolean equals(Object obj) {
-        // self check
         if (this == obj)
             return true;
-        // null check
         if (obj == null)
             return false;
-        // type check and cast
         if (getClass() != obj.getClass())
             return false;
         Position position = (Position) obj;
-        // field comparison
         return position.x == x && position.y == y && position.z == z;
     }
 }

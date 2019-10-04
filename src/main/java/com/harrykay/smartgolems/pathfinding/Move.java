@@ -1,4 +1,4 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class Move {
 
     public static ArrayList<Directions> adjacentOffsets = new ArrayList<Directions>() {{
         adjacentOffsets = new ArrayList<>();
-        //adjacentOffsets.add(Directions.UP);
+        adjacentOffsets.add(Directions.UP);
         adjacentOffsets.add(Directions.DOWN);
         adjacentOffsets.add(Directions.NORTH);
         adjacentOffsets.add(Directions.EAST);
@@ -23,7 +23,8 @@ public class Move {
         put(Directions.SOUTH, new Position(0, 0, 1));
         put(Directions.WEST, new Position(-1, 0, 0));
         put(Directions.EAST, new Position(1, 0, 0));
-        //put(Directions.UP, new Position(0,1,0));
+
+        put(Directions.UP, new Position(0, 1, 0));
         put(Directions.DOWN, new Position(0, -1, 0));
 
         put(Directions.UP_NORTH, new Position(0, 1, -1));
@@ -38,6 +39,6 @@ public class Move {
     }};
 
     public enum Directions {
-        /*UP,*/ DOWN, UP_NORTH, UP_EAST, UP_SOUTH, UP_WEST, DOWN_NORTH, DOWN_SOUTH, DOWN_WEST, DOWN_EAST, NORTH, EAST, SOUTH, WEST
+        UP, DOWN, UP_NORTH, UP_EAST, UP_SOUTH, UP_WEST, DOWN_NORTH, DOWN_SOUTH, DOWN_WEST, DOWN_EAST, NORTH, EAST, SOUTH, WEST
     }
 }

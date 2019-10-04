@@ -13,20 +13,22 @@ import static com.harrykay.smartgolems.server.command.Constants.*;
 public class Build {
     public static ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal(BUILD_COMMAND)
-                .executes(ctx -> {
-                            if (ctx.getSource().getWorld().isRemote()) {
-                                return 0;
-                            }
+                .then(Commands.argument(FILE_NAME_ARG, StringArgumentType.string())
+                        .executes(ctx -> {
+                                    if (ctx.getSource().getWorld().isRemote()) {
+                                        return 0;
+                                    }
 
-                    SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, GOLEM_NAME_ARG));
-                            if (golemEntity == null) {
-                                ctx.getSource().asPlayer().sendMessage(new StringTextComponent(GOLEM_NOT_FOUND));
-                                return 0;
-                            }
+                                    SmartGolemEntity golemEntity = SmartGolems.getGolem(ctx.getSource().asPlayer(), StringArgumentType.getString(ctx, GOLEM_NAME_ARG));
+                                    if (golemEntity == null) {
+                                        ctx.getSource().asPlayer().sendMessage(new StringTextComponent(GOLEM_NOT_FOUND));
+                                        return 0;
+                                    }
 
-                            golemEntity.buildHouse();
-                            return 1;
-                        }
-                );
+                                    String fileName = StringArgumentType.getString(ctx, FILE_NAME_ARG);
+                                    golemEntity.placeBlocks(fileName);
+                                    return 1;
+                                }
+                        ));
     }
 }

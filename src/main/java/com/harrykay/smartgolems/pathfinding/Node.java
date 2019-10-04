@@ -1,9 +1,9 @@
-package com.harrykay.smartgolems.common.entity.ai.pathfind;
+package com.harrykay.smartgolems.pathfinding;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
-import static com.harrykay.smartgolems.common.entity.ai.pathfind.StateHelpers.heuristic;
-import static com.harrykay.smartgolems.common.entity.ai.pathfind.StateHelpers.setAction;
+import static com.harrykay.smartgolems.pathfinding.StateHelpers.heuristic;
+import static com.harrykay.smartgolems.pathfinding.StateHelpers.setAction;
 
 public class Node {
 
